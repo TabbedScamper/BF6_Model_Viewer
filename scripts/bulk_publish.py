@@ -26,20 +26,26 @@ def main():
         if not os.path.exists(src):
             fail += 1; continue
         try:
+            gdata = open(src, "rb").read()
+            gh = hashlib.sha1(gdata).hexdigest()[:12]
+            client.put_object(Bucket=bucket, Key=f"godot/{e['name']}.glb", Body=gdata,
+                              ContentType="model/gltf-binary",
+                              CacheControl="public, max-age=31536000")
             if do_opt:
                 with tempfile.TemporaryDirectory() as td:
                     opt = os.path.join(td, "m.glb")
                     optimize(src, opt)
                     data = open(opt, "rb").read()
             else:
-                data = open(src, "rb").read()
+                data = gdata
             h = hashlib.sha1(data).hexdigest()[:12]
             key = f"models/{e['name']}.glb"
             client.put_object(Bucket=bucket, Key=key, Body=data,
                               ContentType="model/gltf-binary",
                               CacheControl="public, max-age=31536000")
             e["glb"] = key; e["kb"] = round(len(data)/1024)
-            e["hash"] = h; e["v"] = int(e.get("v", 0)) or 1; e["updatedAt"] = now
+            e["hash"] = h; e["ghash"] = gh; e["gkb"] = round(len(gdata)/1024)
+            e["v"] = int(e.get("v", 0)) or 1; e["updatedAt"] = now
             ok += 1
         except Exception as ex:
             fail += 1; print("FAIL", e["name"], ex)

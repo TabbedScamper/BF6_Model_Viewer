@@ -1,13 +1,11 @@
 """Publish approved model fixes (runs in CI on merge to main).
 
-For each GLB under submissions/:
-  1. optimize a copy (gltf-transform: dedup/prune/meshopt + webp textures)
-  2. content-hash it (sha1, first 12 hex)
-  3. upload to the bucket at models/<name>.glb (S3-compatible: R2/B2)
-  4. bump the model's entry in registry/manifest.json
-     {name, glb, kb, hash, version+1, updatedAt}
-  5. regenerate registry/plugin-manifest.json (proxy-name keyed, via matches.tsv)
-  6. upload both manifests
+For each GLB under submissions/, publishes TWO renditions:
+  - godot/<name>.glb  — as submitted (Godot-importable: plain geometry, PNG
+    textures, vertex normals) -> plugin-manifest.json (Update Models button)
+  - models/<name>.glb — condensed web rendition (gltf-transform meshopt +
+    webp; Godot canNOT import these) -> manifest.json (the site)
+  Both are content-hashed; manifests bumped and uploaded.
 
 Bucket credentials from env: MODELS_ENDPOINT, MODELS_BUCKET,
 MODELS_KEY_ID, MODELS_SECRET (set as repo Actions secrets).
@@ -34,7 +32,8 @@ def s3():
         aws_secret_access_key=os.environ["MODELS_SECRET"])
 
 def make_plugin_manifest(man):
-    """proxy-name keyed manifest for the Godot plugin (via matches.tsv)"""
+    """proxy-name keyed manifest for the Godot plugin (via matches.tsv).
+    Points at the godot/ rendition (ghash/gkb per entry)."""
     byname = {e["name"]: e for e in man["props"]}
     match = {}
     for ln in open(os.path.join(ROOT, "data", "matches.tsv"), encoding="utf-8"):
@@ -46,7 +45,9 @@ def make_plugin_manifest(man):
     for prox, game in match.items():
         e = byname.get(game)
         if e is None: continue
-        out["props"][prox] = {"glb": e["glb"], "hash": e.get("hash"), "v": e.get("v", 1)}
+        out["props"][prox] = {"glb": "godot/%s.glb" % e["name"],
+                              "hash": e.get("ghash") or e.get("hash"),
+                              "v": e.get("v", 1)}
     return out
 
 def main():
@@ -59,6 +60,13 @@ def main():
     for f in files:
         name = os.path.basename(f)[:-4]
         with tempfile.TemporaryDirectory() as td:
+            # godot rendition = the approved file as-is
+            gdata = open(f, "rb").read()
+            gh = hashlib.sha1(gdata).hexdigest()[:12]
+            client.put_object(Bucket=bucket, Key=f"godot/{name}.glb", Body=gdata,
+                              ContentType="model/gltf-binary",
+                              CacheControl="public, max-age=31536000")
+            # web rendition = condensed
             opt = os.path.join(td, name + ".glb")
             optimize(f, opt)
             data = open(opt, "rb").read()
@@ -77,9 +85,11 @@ def main():
             e["glb"] = key
             e["kb"] = round(len(data) / 1024)
             e["hash"] = h
+            e["ghash"] = gh
+            e["gkb"] = round(len(gdata) / 1024)
             e["v"] = int(e.get("v", 0)) + 1
             e["updatedAt"] = now
-            print(f"published {name} v{e['v']} hash={h} ({e['kb']} KB)")
+            print(f"published {name} v{e['v']} web={h}({e['kb']}KB) godot={gh}({e['gkb']}KB)")
     man["props"].sort(key=lambda x: x["name"])
     man["count"] = len(man["props"])
     json.dump(man, open(MANIFEST, "w", encoding="utf-8"))
