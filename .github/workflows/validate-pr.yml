@@ -1,0 +1,72 @@
+name: Validate submissions
+on:
+  pull_request:
+    paths:
+      - "submissions/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find changed GLBs
+        id: files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'submissions/**/*.glb' | tr '\n' ' ')
+          echo "glbs=$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "changed: $CHANGED"
+
+      - uses: actions/setup-python@v5
+        if: steps.files.outputs.glbs != ''
+        with: { python-version: "3.12" }
+
+      - name: Validate
+        if: steps.files.outputs.glbs != ''
+        id: validate
+        run: |
+          pip install --quiet trimesh numpy pillow
+          set +e
+          python scripts/validate.py ${{ steps.files.outputs.glbs }} > report.md
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          cat report.md
+
+      - name: Render previews
+        if: steps.files.outputs.glbs != ''
+        continue-on-error: true
+        run: |
+          npm install --no-save @shopify/screenshot-glb
+          mkdir -p previews
+          for f in ${{ steps.files.outputs.glbs }}; do
+            n=$(basename "$f" .glb)
+            npx screenshot-glb -i "$f" -o "previews/$n.png" -w 640 -h 480 || true
+          done
+
+      - name: Upload previews
+        if: steps.files.outputs.glbs != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: previews
+          path: previews/
+          if-no-files-found: ignore
+
+      - name: Comment report on PR
+        if: steps.files.outputs.glbs != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = fs.readFileSync('report.md', 'utf8');
+            body += '\n_Turntable previews are attached as the **previews** artifact on this run._';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.issue.number, body });
+
+      - name: Fail on validation errors
+        if: steps.files.outputs.glbs != '' && steps.validate.outputs.status != '0'
+        run: exit 1

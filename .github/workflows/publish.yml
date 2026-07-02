@@ -1,0 +1,52 @@
+name: Publish approved models
+on:
+  push:
+    branches: [main]
+    paths:
+      - "submissions/**"
+
+permissions:
+  contents: write
+
+concurrency: publish
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+
+      - name: Find merged GLBs
+        id: files
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1..HEAD -- 'submissions/**/*.glb' | tr '\n' ' ')
+          echo "glbs=$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "changed: $CHANGED"
+
+      - uses: actions/setup-python@v5
+        if: steps.files.outputs.glbs != ''
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        if: steps.files.outputs.glbs != ''
+        with: { node-version: "20" }
+
+      - name: Publish to bucket + update manifest
+        if: steps.files.outputs.glbs != ''
+        env:
+          MODELS_ENDPOINT: ${{ secrets.MODELS_ENDPOINT }}
+          MODELS_BUCKET: ${{ secrets.MODELS_BUCKET }}
+          MODELS_KEY_ID: ${{ secrets.MODELS_KEY_ID }}
+          MODELS_SECRET: ${{ secrets.MODELS_SECRET }}
+        run: |
+          pip install --quiet boto3
+          python scripts/publish.py ${{ steps.files.outputs.glbs }}
+
+      - name: Commit manifest bump
+        if: steps.files.outputs.glbs != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add registry/manifest.json registry/plugin-manifest.json
+          git diff --cached --quiet || git commit -m "publish: manifest bump"
+          git push
