@@ -3,7 +3,7 @@
 For each GLB under submissions/, publishes TWO renditions:
   - godot/<name>.glb  — as submitted (Godot-importable: plain geometry, PNG
     textures, vertex normals) -> plugin-manifest.json (Update Models button)
-  - models/<name>.glb — condensed web rendition (gltf-transform meshopt +
+  - models/<name>.glb — condensed web rendition (gltf-transform draco +
     webp; Godot canNOT import these) -> manifest.json (the site)
   Both are content-hashed; manifests bumped and uploaded.
 
@@ -18,7 +18,7 @@ MANIFEST = os.path.join(ROOT, "registry", "manifest.json")
 
 def optimize(src, dst):
     r = subprocess.run(["npx", "--yes", "@gltf-transform/cli", "optimize", src, dst,
-                        "--compress", "meshopt", "--texture-compress", "webp"],
+                        "--compress", "draco", "--texture-compress", "webp"],
                        capture_output=True, text=True, shell=os.name == "nt")
     if r.returncode != 0 or not os.path.exists(dst):
         print(f"  optimize failed ({r.stderr.strip()[:200]}); publishing unoptimized")
