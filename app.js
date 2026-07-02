@@ -1,0 +1,320 @@
+/* ============================================================
+   BF6 Portal Model Library — 3D browser
+   hover = spin 360 · click = grow-out viewer (look around / orbit+zoom)
+   ============================================================ */
+(() => {
+  const CFG = window.CONFIG || {};
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+  let ALL = [];            // all props
+  let view = [];           // filtered/sorted
+  let friendly = {};       // map codename -> friendly name
+  let cat = "all";
+  let term = "";
+  let sort = "name";
+  let mapf = "portal";     // default: show what's available in Portal
+  let vfilter = "all";     // verify-state filter
+  let showDestroyed = false; // hide dc_ destruction variants by default
+  let shown = 0;           // how many currently rendered
+  let cur = null;          // prop open in the big viewer
+
+  // ---------- verification store (localStorage + export/import) ----------
+  const VKEY = "bf6ml_verify";
+  let verify = {};
+  try { verify = JSON.parse(localStorage.getItem(VKEY) || "{}"); } catch (e) { verify = {}; }
+  const saveV = () => localStorage.setItem(VKEY, JSON.stringify(verify));
+  function setV(name, state) {
+    if (verify[name] === state) delete verify[name]; else verify[name] = state;  // toggle off if same
+    saveV();
+    // reflect on the card if present
+    const card = grid.querySelector(`.mcard[data-name="${CSS.escape(name)}"]`);
+    if (card) reflectCard(card, name);
+    if (cur && cur.name === name) reflectViewer(name);
+    renderProgress();
+    if (vfilter !== "all") applyFilters();   // may remove/add from current view
+  }
+  function reflectCard(card, name) {
+    const v = verify[name];
+    card.classList.toggle("v-ok", v === "ok");
+    card.classList.toggle("v-bad", v === "bad");
+    const ok = card.querySelector('.vbtn.vok'), bad = card.querySelector('.vbtn.vbad');
+    if (ok) ok.classList.toggle("on", v === "ok");
+    if (bad) bad.classList.toggle("on", v === "bad");
+  }
+  function reflectViewer(name) {
+    const v = verify[name];
+    $("#mvOk").classList.toggle("on", v === "ok");
+    $("#mvBad").classList.toggle("on", v === "bad");
+  }
+  function renderProgress() {
+    const vals = Object.values(verify);
+    const ok = vals.filter(x => x === "ok").length, bad = vals.filter(x => x === "bad").length;
+    const total = ALL.length, left = total - ok - bad;
+    $("#vbProgress").innerHTML =
+      `<b class="vp-ok">&#10003; ${ok}</b> verified &middot; <b class="vp-bad">&#10007; ${bad}</b> flagged &middot; <span class="vp-left">${left} left</span>`;
+  }
+
+  const grid = $("#grid");
+  const empty = $("#empty");
+  const sentinel = $("#sentinel");
+  const toastEl = $("#toast");
+
+  // ---------- boot ----------
+  // no-store: the manifest changes after rebuilds; heuristic caching serves stale prop lists
+  fetch(CFG.manifest, { cache: "no-store" }).then(r => r.json()).then(data => {
+    ALL = data.props || [];
+    friendly = data.friendly || {};
+    buildStats();
+    buildMapSel();
+    buildChips();
+    renderProgress();
+    applyFilters();
+    setTimeout(() => $("#loader").classList.add("hide"), 250);
+  }).catch(err => {
+    $("#loader").innerHTML = '<div class="loader-text">Could not load manifest.json</div>';
+    console.error(err);
+  });
+
+  // ---------- stats (count-up) ----------
+  function buildStats() {
+    const live = ALL.filter(p => !p.destroyed);   // destruction variants hidden by default
+    const portal = live.filter(p => p.portal).length;
+    const tris = live.reduce((a, p) => a + (p.tris || 0), 0);
+    const stats = [
+      { n: live.length, label: "Models" },
+      { n: portal, label: "In Portal" },
+      { n: tris, label: "Triangles" },
+    ];
+    const wrap = $("#headerStats");
+    wrap.innerHTML = stats.map(s => `<div class="stat"><b data-to="${s.n}">0</b><span>${s.label}</span></div>`).join("");
+    $$(".stat b", wrap).forEach(el => countUp(el, +el.dataset.to));
+  }
+  function countUp(el, to) {
+    const dur = 1100, t0 = performance.now();
+    const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(1) + "M" : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1) + "k" : "" + n;
+    const step = t => {
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = fmt(Math.round(to * e));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // ---------- map dropdown ----------
+  function buildMapSel() {
+    const sel = $("#mapSel");
+    // all map codes present across props
+    const codes = new Set();
+    ALL.forEach(p => (p.maps || []).forEach(m => codes.add(m)));
+    const label = c => friendly[c] || c.replace(/_/g, " ");
+    const ordered = [...codes].sort((a, b) => label(a).localeCompare(label(b)));
+    const opts = [
+      `<option value="portal">In Portal (any map)</option>`,
+      `<option value="global">Global (every map)</option>`,
+      `<optgroup label="Maps">` + ordered.map(c => `<option value="map:${c}">${label(c)}</option>`).join("") + `</optgroup>`,
+      `<option value="all">All extracted</option>`,
+      `<option value="notportal">Not in Portal</option>`,
+    ];
+    sel.innerHTML = opts.join("");
+    sel.value = mapf;
+    sel.addEventListener("change", () => { mapf = sel.value; applyFilters(); });
+  }
+  function mapMatch(p) {
+    if (mapf === "all") return true;
+    if (mapf === "portal") return !!p.portal;
+    if (mapf === "global") return !!p.global;
+    if (mapf === "notportal") return !p.portal;
+    if (mapf.startsWith("map:")) { const c = mapf.slice(4); return p.global || (p.maps || []).includes(c); }
+    return true;
+  }
+  function vMatch(p) {
+    if (vfilter === "all") return true;
+    const v = verify[p.name];
+    if (vfilter === "unset") return !v;
+    return v === vfilter;   // "ok" | "bad"
+  }
+
+  // ---------- chips ----------
+  function buildChips() {
+    const counts = {};
+    ALL.forEach(p => counts[p.cat] = (counts[p.cat] || 0) + 1);
+    const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const chips = $("#chips");
+    const mk = (id, label, n) => `<button class="chip${id === cat ? " active" : ""}" data-cat="${id}">${label}<span class="n">${n}</span></button>`;
+    chips.innerHTML = mk("all", "All", ALL.length) + cats.map(c => mk(c, c, counts[c])).join("");
+    $$(".chip", chips).forEach(b => b.onclick = () => {
+      cat = b.dataset.cat;
+      $$(".chip", chips).forEach(x => x.classList.toggle("active", x === b));
+      applyFilters();
+    });
+  }
+
+  // ---------- filter / sort ----------
+  function applyFilters() {
+    const q = term.trim().toLowerCase();
+    view = ALL.filter(p =>
+      (cat === "all" || p.cat === cat) &&
+      (showDestroyed || !p.destroyed) &&
+      mapMatch(p) &&
+      vMatch(p) &&
+      (!q || p.name.toLowerCase().includes(q) || (p.portalName || "").toLowerCase().includes(q))
+    );
+    if (sort === "name") view.sort((a, b) => a.name.localeCompare(b.name));
+    else if (sort === "tris-desc") view.sort((a, b) => (b.tris || 0) - (a.tris || 0));
+    else if (sort === "tris-asc") view.sort((a, b) => (a.tris || 0) - (b.tris || 0));
+    grid.innerHTML = "";
+    shown = 0;
+    empty.hidden = view.length > 0;
+    if (view.length) { $("#emptyTerm").textContent = q; }
+    renderMore();
+  }
+
+  function renderMore() {
+    const next = view.slice(shown, shown + (CFG.pageSize || 48));
+    const frag = document.createDocumentFragment();
+    next.forEach(p => frag.appendChild(makeCard(p)));
+    grid.appendChild(frag);
+    shown += next.length;
+  }
+
+  // ---------- card ----------
+  function fmtTris(n) { return n >= 1e3 ? (n / 1e3).toFixed(1) + "k tris" : (n || 0) + " tris"; }
+  function mapNames(p) { return (p.maps || []).map(c => friendly[c] || c.replace(/_/g, " ")); }
+  // Portal prefab name is the primary label; fall back to the raw asset name when not in Portal
+  function displayName(p) { return p.portalName || p.name; }
+  // cache-bust GLB urls by mtime (fallback: size) so a rebuilt model is re-fetched, not served stale
+  function glbUrl(p) { return (CFG.modelsBase || "") + p.glb + "?b=" + (p.hash || p.mt || p.kb || 0); }
+  function makeCard(p) {
+    const card = document.createElement("div");
+    card.className = "mcard" + (p.portal ? "" : " not-portal");
+    card.dataset.name = p.name;
+    const pb = !p.portal ? `<span class="pbadge pb-no" title="Extracted from the game, but not a placeable Portal asset">NOT IN PORTAL</span>`
+      : p.global ? `<span class="pbadge pb-glob" title="Placeable on every Portal map">GLOBAL</span>`
+      : `<span class="pbadge pb-yes" title="Portal maps: ${mapNames(p).join(', ')}">PORTAL · ${p.maps.length} map${p.maps.length !== 1 ? "s" : ""}</span>`;
+    const title = displayName(p);
+    card.innerHTML = `
+      <div class="mcard-view">
+        <span class="mcard-cat">${p.cat}</span>
+        ${p.destroyed ? `<span class="pbadge pb-dc" title="Destruction variant (shot-up / debris version)">DESTROYED</span>` : ""}
+        ${pb}
+        <span class="spin-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg></span>
+        <div class="vctl">
+          <button class="vbtn vok" data-v="ok" title="Looks right">&#10003;</button>
+          <button class="vbtn vbad" data-v="bad" title="Looks wrong">&#10007;</button>
+        </div>
+        <model-viewer src="${glbUrl(p)}" loading="lazy" reveal="auto" interaction-prompt="none"
+          camera-controls disable-zoom disable-tap disable-pan camera-orbit="-25deg 78deg auto"
+          rotation-per-second="${CFG.spinSpeed || '42deg'}" exposure="1.0" environment-image="neutral"></model-viewer>
+      </div>
+      <div class="mcard-foot">
+        <span class="mcard-name" title="${title} — in-game: ${p.name}">${title}</span>
+        <span class="mcard-tris">${fmtTris(p.tris)}</span>
+      </div>`;
+    const mv = $("model-viewer", card);
+    // hover = spin 360; leave = stop + reset framing
+    if (!isTouch) {
+      card.addEventListener("mouseenter", () => mv.setAttribute("auto-rotate", ""));
+      card.addEventListener("mouseleave", () => { mv.removeAttribute("auto-rotate"); try { mv.resetTurntableRotation(); } catch (e) {} });
+    } else {
+      mv.setAttribute("auto-rotate", "");           // gentle idle spin on mobile
+    }
+    card.addEventListener("click", () => openViewer(p));
+    // verify buttons (don't open the viewer)
+    reflectCard(card, p.name);
+    card.querySelectorAll(".vbtn").forEach(b => b.addEventListener("click", e => {
+      e.stopPropagation();
+      setV(p.name, b.dataset.v);
+    }));
+    return card;
+  }
+
+  // ---------- grow-out expanded viewer ----------
+  const ov = $("#mvOverlay"), big = $("#mvBig");
+  function openViewer(p) {
+    cur = p;
+    $("#mvName").textContent = displayName(p);
+    const pill = !p.portal ? `<span class="pill no">Not in Portal</span>`
+      : p.global ? `<span class="pill glob">Global · every map</span>`
+      : `<span class="pill yes">Portal</span>`;
+    const maps = p.portal && !p.global && p.maps.length ? ` &middot; ${mapNames(p).join(", ")}` : "";
+    // show the matching in-game asset name when the Portal name is what's headlined
+    const ingame = (p.portalName && p.portalName !== p.name) ? `<span class="mv-ingame" title="In-game asset name">in-game: <code>${p.name}</code></span>` : "";
+    $("#mvSub").innerHTML = `${p.cat} &middot; ${fmtTris(p.tris)}${pill}${maps}${ingame}`;
+    $("#mvHint").textContent = isTouch ? "drag to orbit · pinch to zoom" : "drag to look around · scroll to zoom · right-drag to pan";
+    big.setAttribute("src", glbUrl(p));
+    big.setAttribute("camera-controls", "");
+    if (isTouch) big.setAttribute("disable-pan", ""); else big.removeAttribute("disable-pan");
+    big.removeAttribute("disable-zoom");
+    reflectViewer(p.name);
+    ov.hidden = false;
+    requestAnimationFrame(() => ov.classList.add("show"));
+  }
+  $("#mvOk").onclick = () => cur && setV(cur.name, "ok");
+  $("#mvBad").onclick = () => cur && setV(cur.name, "bad");
+  function closeViewer() {
+    ov.classList.remove("show");
+    setTimeout(() => { ov.hidden = true; big.removeAttribute("src"); }, 340);
+  }
+  $("#mvClose").onclick = closeViewer;
+  ov.addEventListener("click", e => { if (e.target === ov) closeViewer(); });
+  $("#mvReset").onclick = () => { try { big.resetTurntableRotation(); big.jumpCameraToGoal(); } catch (e) {} big.cameraOrbit = "auto auto auto"; };
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeViewer(); closeModals(); } });
+
+  // ---------- infinite scroll ----------
+  new IntersectionObserver(es => {
+    if (es[0].isIntersecting && shown < view.length) renderMore();
+  }, { rootMargin: "600px" }).observe(sentinel);
+
+  // ---------- search / sort ----------
+  const search = $("#search");
+  search.addEventListener("input", () => {
+    term = search.value;
+    $(".search").classList.toggle("has-text", !!term);
+    applyFilters();
+  });
+  $("#searchClear").onclick = () => { search.value = ""; term = ""; $(".search").classList.remove("has-text"); applyFilters(); search.focus(); };
+  $("#sortSel").addEventListener("change", e => { sort = e.target.value; applyFilters(); });
+  $("#destToggle").addEventListener("change", e => { showDestroyed = e.target.checked; applyFilters(); });
+
+  // ---------- verify controls ----------
+  $("#verifySel").addEventListener("change", e => { vfilter = e.target.value; applyFilters(); });
+  $("#vbExport").onclick = () => {
+    const blob = new Blob([JSON.stringify(verify, null, 2)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "verification.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    window.toast && toast("Exported " + Object.keys(verify).length + " marks");
+  };
+  $("#vbImport").addEventListener("change", e => {
+    const f = e.target.files[0]; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try { Object.assign(verify, JSON.parse(rd.result)); saveV(); renderProgress(); applyFilters(); window.toast && toast("Imported marks"); }
+      catch (x) { window.toast && toast("Bad JSON file"); }
+    };
+    rd.readAsText(f); e.target.value = "";
+  });
+  $("#vbReset").onclick = () => { if (confirm("Clear ALL verification marks?")) { verify = {}; saveV(); renderProgress(); applyFilters(); } };
+  // keyboard: while a model is open, V = verify, X = flag
+  document.addEventListener("keydown", e => {
+    if (ov.hidden || !cur) return;
+    if (e.key === "v" || e.key === "V") setV(cur.name, "ok");
+    else if (e.key === "x" || e.key === "X") setV(cur.name, "bad");
+  });
+
+  // ---------- modals ----------
+  function openM(id) { $(id).hidden = false; }
+  function closeModals() { $$(".about-overlay").forEach(o => o.hidden = true); }
+  $("#aboutBtn").onclick = () => openM("#aboutOverlay");
+  $("#creditsBtn").onclick = () => openM("#creditsOverlay");
+  $("#aboutClose").onclick = closeModals;
+  $("#creditsClose").onclick = closeModals;
+  $$(".about-overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o) closeModals(); }));
+
+  // ---------- header shrink ----------
+  addEventListener("scroll", () => $("#header").classList.toggle("small", scrollY > 40), { passive: true });
+
+  // ---------- toast ----------
+  window.toast = (m) => { toastEl.textContent = m; toastEl.classList.add("show"); setTimeout(() => toastEl.classList.remove("show"), 2000); };
+})();

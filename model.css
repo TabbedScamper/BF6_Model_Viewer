@@ -1,0 +1,127 @@
+/* ============================================================
+   Model Library — 3D card grid + grow-out viewer
+   Reuses the SFX-library design tokens (style.css).
+   ============================================================ */
+
+/* toolbar sort */
+.tool-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sortwrap{display:flex;align-items:center;gap:8px}
+.tf-label{font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--muted)}
+.sortsel{background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 14px;font-family:inherit;font-size:.9rem;cursor:pointer;transition:var(--ease)}
+.sortsel:focus{outline:none;border-color:var(--line-h)}
+
+/* category chips (reuse look of SFX chips) */
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
+.chip{font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;font-weight:600;
+  padding:8px 15px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--txt2);cursor:pointer;transition:var(--ease);white-space:nowrap}
+.chip:hover{border-color:var(--line-h);color:var(--txt);transform:translateY(-1px)}
+.chip.active{background:var(--grad);color:#1a0d03;border-color:transparent;box-shadow:0 6px 18px rgba(255,107,26,.4)}
+.chip .n{opacity:.6;font-size:.72em;margin-left:6px}
+
+/* ---------- model grid ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.mcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  cursor:pointer;transition:transform var(--ease),border-color var(--ease),box-shadow var(--ease);will-change:transform}
+.mcard:hover{transform:translateY(-4px);border-color:var(--line-h);box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 26px rgba(255,107,26,.14)}
+.mcard-view{position:relative;width:100%;aspect-ratio:1/1;background:
+  radial-gradient(120% 90% at 50% 15%,rgba(58,160,255,.08),transparent 60%),
+  linear-gradient(180deg,#12100c,#0b0a08)}
+.mcard model-viewer{width:100%;height:100%;--poster-color:transparent;background:transparent;
+  --progress-bar-color:var(--cyan);--progress-mask:transparent}
+.mcard .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+.mcard .ph svg{width:44px;height:44px;opacity:.35}
+.mcard-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;border-top:1px solid var(--line)}
+.mcard-name{font-family:'BF Text','Inter',sans-serif;font-size:.82rem;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcard-tris{font-family:'BF Mono','Inter',monospace;font-size:.66rem;color:var(--muted);white-space:nowrap;flex:none}
+.mcard-cat{position:absolute;top:9px;left:9px;font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em;
+  font-size:.6rem;color:var(--txt2);background:rgba(8,8,12,.7);border:1px solid var(--line);padding:3px 8px;border-radius:6px;backdrop-filter:blur(4px)}
+.mcard .spin-badge{position:absolute;top:9px;right:9px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(8,8,12,.6);border:1px solid var(--line);color:var(--blue);opacity:0;transition:.25s}
+.mcard:hover .spin-badge{opacity:1}
+.mcard .spin-badge svg{width:15px;height:15px}
+
+/* infinite-scroll sentinel */
+.loadmore{height:40px}
+.empty{text-align:center;color:var(--muted);padding:60px 0;font-size:1rem}
+
+/* ---------- grow-out expanded viewer ---------- */
+.mv-overlay{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:clamp(10px,3vw,40px);
+  background:rgba(4,4,6,.82);backdrop-filter:blur(10px);opacity:0;transition:opacity .3s ease}
+.mv-overlay.show{opacity:1}
+.mv-stage{width:min(1100px,96vw);height:min(80vh,900px);background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line-h);border-radius:var(--r);box-shadow:var(--shadow),0 0 60px rgba(255,107,26,.15);
+  display:flex;flex-direction:column;overflow:hidden;transform:scale(.4);opacity:.2;transition:transform .38s cubic-bezier(.16,1,.3,1),opacity .3s}
+.mv-overlay.show .mv-stage{transform:scale(1);opacity:1}
+.mv-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);flex:none}
+.mv-name{font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.03em;font-size:1.15rem;color:var(--txt)}
+.mv-sub{font-family:'BF Mono','Inter',monospace;font-size:.72rem;color:var(--muted);margin-top:2px}
+.mv-actions{display:flex;gap:8px;flex:none}
+.mv-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:rgba(255,107,26,.08);
+  border:1px solid rgba(255,107,26,.4);color:var(--txt);font-size:1.3rem;text-decoration:none;transition:var(--ease)}
+.mv-btn:hover{background:rgba(255,107,26,.18);border-color:var(--cyan);color:#fff;transform:translateY(-1px)}
+.mv-close{background:rgba(255,90,77,.1);border-color:rgba(255,90,77,.4)}
+.mv-close:hover{background:rgba(255,90,77,.2);border-color:var(--red)}
+.mv-big{flex:1;width:100%;background:
+  radial-gradient(120% 80% at 50% 10%,rgba(58,160,255,.10),transparent 60%),
+  linear-gradient(180deg,#100e0b,#0a0908);
+  --poster-color:transparent;--progress-bar-color:var(--cyan)}
+.mv-hint{flex:none;text-align:center;padding:10px;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);letter-spacing:.02em}
+
+@media (max-width:640px){
+  .mgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .mv-stage{height:82vh;width:100vw;border-radius:0}
+}
+
+/* ---------- Portal availability badges ---------- */
+.pbadge{position:absolute;bottom:9px;left:9px;font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;
+  letter-spacing:.05em;font-size:.58rem;font-weight:700;padding:3px 8px;border-radius:6px;backdrop-filter:blur(4px);z-index:2}
+.pb-yes{color:#0c1a10;background:rgba(63,224,138,.9);border:1px solid rgba(63,224,138,.6)}
+.pb-glob{color:#04121d;background:linear-gradient(90deg,#3aa0ff,#7dd3ff);border:1px solid rgba(58,160,255,.6)}
+.pb-no{color:#1a1204;background:repeating-linear-gradient(45deg,#ffb24d,#ffb24d 7px,#171310 7px,#171310 14px);
+  border:1px solid rgba(255,178,77,.6);text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.pb-dc{position:absolute;top:9px;right:42px;color:#fff;background:rgba(200,60,50,.85);border:1px solid rgba(255,90,77,.6);
+  font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:.55rem;font-weight:700;
+  padding:3px 7px;border-radius:6px;backdrop-filter:blur(4px);z-index:2}
+/* show-destroyed toggle */
+.dtoggle{display:flex;align-items:center;gap:7px;font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;
+  letter-spacing:.1em;font-size:.72rem;color:var(--muted);cursor:pointer;user-select:none}
+.dtoggle input{accent-color:var(--cyan);width:15px;height:15px;cursor:pointer}
+.mv-ingame{display:inline-block;margin-left:10px;color:var(--muted)}
+.mv-ingame code{color:var(--txt2);background:rgba(255,255,255,.05);padding:1px 6px;border-radius:5px;font-size:.92em}
+.mcard.not-portal{opacity:.86}
+.mcard.not-portal .mcard-view{filter:saturate(.85)}
+.mv-sub .pill{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:6px;font-size:.62rem;font-weight:700;letter-spacing:.05em;vertical-align:middle}
+.mv-sub .pill.yes{color:#0c1a10;background:#3fe08a}
+.mv-sub .pill.glob{color:#04121d;background:#3aa0ff}
+.mv-sub .pill.no{color:#1a1204;background:#ffb24d}
+
+/* ---------- verify bar (manual QA) ---------- */
+.verifybar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 18px;
+  padding:11px 15px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm)}
+.vb-progress{font-family:'BF Mono','Inter',monospace;font-size:.82rem;color:var(--txt2)}
+.vb-progress .vp-ok{color:#3fe08a}.vb-progress .vp-bad{color:#ffb24d}.vb-progress .vp-left{color:var(--muted)}
+.vb-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn-mini{font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;font-weight:700;
+  padding:9px 14px;border-radius:9px;background:rgba(255,107,26,.08);border:1px solid rgba(255,107,26,.4);color:var(--txt);cursor:pointer;transition:var(--ease)}
+.btn-mini:hover{background:rgba(255,107,26,.16);border-color:var(--cyan);color:#fff}
+.btn-mini.danger{background:rgba(255,90,77,.08);border-color:rgba(255,90,77,.4)}
+.btn-mini.danger:hover{background:rgba(255,90,77,.18);border-color:var(--red)}
+
+/* per-card verify buttons */
+.vctl{position:absolute;bottom:9px;right:9px;display:flex;gap:6px;z-index:3;opacity:0;transition:.2s}
+.mcard:hover .vctl,.mcard.v-ok .vctl,.mcard.v-bad .vctl{opacity:1}
+.vbtn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:1rem;font-weight:700;line-height:1;
+  background:rgba(8,8,12,.72);border:1px solid var(--line);color:var(--txt2);cursor:pointer;backdrop-filter:blur(4px);transition:.15s}
+.vbtn:hover{transform:translateY(-1px)}
+.vbtn.vok:hover,.vbtn.vok.on{background:#3fe08a;border-color:#3fe08a;color:#062012}
+.vbtn.vbad:hover,.vbtn.vbad.on{background:#ffb24d;border-color:#ffb24d;color:#1a1204}
+/* card state rings */
+.mcard.v-ok{border-color:rgba(63,224,138,.65);box-shadow:0 0 0 1px rgba(63,224,138,.35),0 12px 30px rgba(0,0,0,.4)}
+.mcard.v-bad{border-color:rgba(255,178,77,.7);box-shadow:0 0 0 1px rgba(255,178,77,.4),0 12px 30px rgba(0,0,0,.4)}
+.mcard.v-ok .mcard-view::after,.mcard.v-bad .mcard-view::after{content:"";position:absolute;inset:0;pointer-events:none;
+  border-top:3px solid transparent}
+.mcard.v-ok .mcard-view::after{border-top-color:#3fe08a}
+.mcard.v-bad .mcard-view::after{border-top-color:#ffb24d}
+/* viewer verify buttons active */
+.mv-ok.on{background:#3fe08a;border-color:#3fe08a;color:#062012}
+.mv-bad.on{background:#ffb24d;border-color:#ffb24d;color:#1a1204}
