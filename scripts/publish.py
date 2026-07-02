@@ -1,8 +1,8 @@
 """Publish approved model fixes (runs in CI on merge to main).
 
 For each GLB under submissions/, publishes TWO renditions:
-  - godot/<name>.glb  — as submitted (Godot-importable: plain geometry, PNG
-    textures, vertex normals) -> plugin-manifest.json (Update Models button)
+  - godot/<name>.glb  — Godot-importable: plain geometry (no draco), WebP
+    textures (Godot imports EXT_texture_webp) -> plugin-manifest.json
   - models/<name>.glb — condensed web rendition (gltf-transform draco +
     webp; Godot canNOT import these) -> manifest.json (the site)
   Both are content-hashed; manifests bumped and uploaded.
@@ -60,8 +60,11 @@ def main():
     for f in files:
         name = os.path.basename(f)[:-4]
         with tempfile.TemporaryDirectory() as td:
-            # godot rendition = the approved file as-is
-            gdata = open(f, "rb").read()
+            # godot rendition = webp textures, geometry untouched (importable)
+            gsrc = os.path.join(td, name + ".godot.glb")
+            r = subprocess.run(["npx", "--yes", "@gltf-transform/cli", "webp", f, gsrc],
+                               capture_output=True, text=True, shell=os.name == "nt")
+            gdata = open(gsrc if os.path.exists(gsrc) else f, "rb").read()
             gh = hashlib.sha1(gdata).hexdigest()[:12]
             client.put_object(Bucket=bucket, Key=f"godot/{name}.glb", Body=gdata,
                               ContentType="model/gltf-binary",
