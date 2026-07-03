@@ -10,8 +10,8 @@
 
   let ALL = [];            // all props
   let view = [];           // filtered/sorted
-  let friendly = {};       // map codename -> friendly name
-  let cat = "all";
+  let friendly = {};       // map codename -> friendly name (manifest fallback)
+  const MAPS = CFG.maps || {};   // code -> {name, level} (SDK level codename)
   let term = "";
   let sort = "name";
   let mapf = "portal";     // default: show what's available in Portal
@@ -67,8 +67,7 @@
     ALL = data.props || [];
     friendly = data.friendly || {};
     buildStats();
-    buildMapSel();
-    buildChips();
+    buildMapTabs();
     renderProgress();
     applyFilters();
     setTimeout(() => $("#loader").classList.add("hide"), 250);
@@ -102,24 +101,38 @@
     requestAnimationFrame(step);
   }
 
-  // ---------- map dropdown ----------
-  function buildMapSel() {
-    const sel = $("#mapSel");
+  // ---------- map tabs ----------
+  const mapName = c => (MAPS[c] && MAPS[c].name) || friendly[c] || c.replace(/_/g, " ");
+  const mapLevel = c => (MAPS[c] && MAPS[c].level) || "MP_" + c;
+  function buildMapTabs() {
+    const nav = $("#maptabs");
     // all map codes present across props
     const codes = new Set();
     ALL.forEach(p => (p.maps || []).forEach(m => codes.add(m)));
-    const label = c => friendly[c] || c.replace(/_/g, " ");
-    const ordered = [...codes].sort((a, b) => label(a).localeCompare(label(b)));
-    const opts = [
-      `<option value="portal">In Portal (any map)</option>`,
-      `<option value="global">Global (every map)</option>`,
-      `<optgroup label="Maps">` + ordered.map(c => `<option value="map:${c}">${label(c)}</option>`).join("") + `</optgroup>`,
-      `<option value="all">All extracted</option>`,
-      `<option value="notportal">Not in Portal</option>`,
-    ];
-    sel.innerHTML = opts.join("");
-    sel.value = mapf;
-    sel.addEventListener("change", () => { mapf = sel.value; applyFilters(); });
+    const ordered = [...codes].sort((a, b) => mapName(a).localeCompare(mapName(b)));
+    const live = ALL.filter(p => !p.destroyed);
+    const nPortal = live.filter(p => p.portal).length;
+    const nGlobal = live.filter(p => p.global).length;
+    const nOut = live.filter(p => !p.portal).length;
+    const perMap = c => live.filter(p => p.global || (p.maps || []).includes(c)).length;
+    const tab = (val, name, sub, n) =>
+      `<button class="mtab${val === mapf ? " active" : ""}" data-map="${val}" title="${sub}">
+         <span class="mtab-name">${name}<span class="n">${n}</span></span>
+         <span class="mtab-code">${sub}</span>
+       </button>`;
+    nav.innerHTML =
+      tab("portal", "All Maps", "every Portal asset", nPortal) +
+      tab("global", "Global", "placeable on any map", nGlobal) +
+      `<span class="mtab-sep" aria-hidden="true"></span>` +
+      ordered.map(c => tab("map:" + c, mapName(c), mapLevel(c), perMap(c))).join("") +
+      `<span class="mtab-sep" aria-hidden="true"></span>` +
+      tab("notportal", "Not in Portal", "extracted, no Portal prefab", nOut) +
+      tab("all", "Everything", "all extracted models", live.length);
+    $$(".mtab", nav).forEach(b => b.onclick = () => {
+      mapf = b.dataset.map;
+      $$(".mtab", nav).forEach(x => x.classList.toggle("active", x === b));
+      applyFilters();
+    });
   }
   function mapMatch(p) {
     if (mapf === "all") return true;
@@ -136,26 +149,10 @@
     return v === vfilter;   // "ok" | "bad"
   }
 
-  // ---------- chips ----------
-  function buildChips() {
-    const counts = {};
-    ALL.forEach(p => counts[p.cat] = (counts[p.cat] || 0) + 1);
-    const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-    const chips = $("#chips");
-    const mk = (id, label, n) => `<button class="chip${id === cat ? " active" : ""}" data-cat="${id}">${label}<span class="n">${n}</span></button>`;
-    chips.innerHTML = mk("all", "All", ALL.length) + cats.map(c => mk(c, c, counts[c])).join("");
-    $$(".chip", chips).forEach(b => b.onclick = () => {
-      cat = b.dataset.cat;
-      $$(".chip", chips).forEach(x => x.classList.toggle("active", x === b));
-      applyFilters();
-    });
-  }
-
   // ---------- filter / sort ----------
   function applyFilters() {
     const q = term.trim().toLowerCase();
     view = ALL.filter(p =>
-      (cat === "all" || p.cat === cat) &&
       (showDestroyed || !p.destroyed) &&
       mapMatch(p) &&
       vMatch(p) &&
@@ -180,8 +177,8 @@
   }
 
   // ---------- card ----------
-  function fmtTris(n) { return n >= 1e3 ? (n / 1e3).toFixed(1) + "k tris" : (n || 0) + " tris"; }
-  function mapNames(p) { return (p.maps || []).map(c => friendly[c] || c.replace(/_/g, " ")); }
+  function fmtTris(n) { return !n ? "" : n >= 1e3 ? (n / 1e3).toFixed(1) + "k tris" : n + " tris"; }
+  function mapNames(p) { return (p.maps || []).map(mapName); }
   // Portal prefab name is the primary label; fall back to the raw asset name when not in Portal
   function displayName(p) { return p.portalName || p.name; }
   // cache-bust GLB urls by mtime (fallback: size) so a rebuilt model is re-fetched, not served stale
@@ -196,7 +193,6 @@
     const title = displayName(p);
     card.innerHTML = `
       <div class="mcard-view">
-        <span class="mcard-cat">${p.cat}</span>
         ${p.destroyed ? `<span class="pbadge pb-dc" title="Destruction variant (shot-up / debris version)">DESTROYED</span>` : ""}
         ${pb}
         <span class="spin-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg></span>
@@ -241,7 +237,7 @@
     const maps = p.portal && !p.global && p.maps.length ? ` &middot; ${mapNames(p).join(", ")}` : "";
     // show the matching in-game asset name when the Portal name is what's headlined
     const ingame = (p.portalName && p.portalName !== p.name) ? `<span class="mv-ingame" title="In-game asset name">in-game: <code>${p.name}</code></span>` : "";
-    $("#mvSub").innerHTML = `${p.cat} &middot; ${fmtTris(p.tris)}${pill}${maps}${ingame}`;
+    $("#mvSub").innerHTML = `${fmtTris(p.tris)}${pill}${maps}${ingame}`;
     $("#mvHint").textContent = isTouch ? "drag to orbit · pinch to zoom" : "drag to look around · scroll to zoom · right-drag to pan";
     big.setAttribute("src", glbUrl(p));
     big.setAttribute("camera-controls", "");
