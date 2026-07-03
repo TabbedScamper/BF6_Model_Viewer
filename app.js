@@ -124,10 +124,7 @@
       tab("portal", "All Maps", "every Portal asset", nPortal) +
       tab("global", "Global", "placeable on any map", nGlobal) +
       `<span class="mtab-sep" aria-hidden="true"></span>` +
-      ordered.map(c => tab("map:" + c, mapName(c), mapLevel(c), perMap(c))).join("") +
-      `<span class="mtab-sep" aria-hidden="true"></span>` +
-      tab("notportal", "Not in Portal", "extracted, no Portal prefab", nOut) +
-      tab("all", "Everything", "all extracted models", live.length);
+      ordered.map(c => tab("map:" + c, mapName(c), mapLevel(c), perMap(c))).join("");
     $$(".mtab", nav).forEach(b => b.onclick = () => {
       mapf = b.dataset.map;
       $$(".mtab", nav).forEach(x => x.classList.toggle("active", x === b));
