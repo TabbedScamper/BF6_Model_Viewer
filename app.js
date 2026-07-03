@@ -78,7 +78,7 @@
 
   // ---------- stats (count-up) ----------
   function buildStats() {
-    const live = ALL.filter(p => !p.destroyed);   // destruction variants hidden by default
+    const live = ALL.filter(p => !p.destroyed && !p.dup);   // destruction variants + wrapper dupes hidden
     const portal = live.filter(p => p.portal).length;
     const tris = live.reduce((a, p) => a + (p.tris || 0), 0);
     const stats = [
@@ -110,7 +110,7 @@
     const codes = new Set();
     ALL.forEach(p => (p.maps || []).forEach(m => codes.add(m)));
     const ordered = [...codes].sort((a, b) => mapName(a).localeCompare(mapName(b)));
-    const live = ALL.filter(p => !p.destroyed);
+    const live = ALL.filter(p => !p.destroyed && !p.dup);
     const nPortal = live.filter(p => p.portal).length;
     const nGlobal = live.filter(p => p.global).length;
     const nOut = live.filter(p => !p.portal).length;
@@ -153,6 +153,7 @@
   function applyFilters() {
     const q = term.trim().toLowerCase();
     view = ALL.filter(p =>
+      !p.dup &&
       (showDestroyed || !p.destroyed) &&
       mapMatch(p) &&
       vMatch(p) &&
