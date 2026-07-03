@@ -47,6 +47,8 @@ def make_plugin_manifest(man):
         if e is None: continue
         out["props"][prox] = {"glb": "godot/%s.glb" % e["name"],
                               "hash": e.get("ghash") or e.get("hash"),
+                              "med_glb": "godot-med/%s.glb" % e["name"],
+                              "med_hash": e.get("gmhash"),
                               "v": e.get("v", 1)}
     return out
 
