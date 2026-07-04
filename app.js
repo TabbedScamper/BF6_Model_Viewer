@@ -78,16 +78,19 @@
 
   // ---------- full-library bundle download ----------
   (function libBundle() {
-    const a = document.getElementById("libDl");
-    if (!a || !CFG.modelsBase) return;
+    const btn = document.getElementById("libDl");
+    if (!btn || !CFG.modelsBase) return;
     fetch(CFG.modelsBase + "bundles/bundles.json", { cache: "no-store" })
       .then(r => r.ok ? r.json() : null).then(m => {
         if (!m || !m.file) return;
-        a.href = CFG.modelsBase + m.file;
+        const url = CFG.modelsBase + m.file;
         const gb = (m.bytes || 0) / 1e9;
-        document.getElementById("libDlSize").textContent =
-          gb >= 1 ? "(" + gb.toFixed(1) + " GB)" : "(" + Math.round((m.bytes || 0) / 1e6) + " MB)";
-        a.hidden = false;
+        const size = gb >= 1 ? "(" + gb.toFixed(1) + " GB)" : "(" + Math.round((m.bytes || 0) / 1e6) + " MB)";
+        document.getElementById("libDlSize").textContent = size;
+        const dl = document.getElementById("installDlBtn");
+        if (dl) { dl.href = url; document.getElementById("installDlSize").textContent = size; }
+        btn.hidden = false;
+        btn.onclick = () => openM("#installOverlay");
       }).catch(() => {});
   })();
 
@@ -319,6 +322,7 @@
   $("#creditsBtn").onclick = () => openM("#creditsOverlay");
   $("#aboutClose").onclick = closeModals;
   $("#creditsClose").onclick = closeModals;
+  { const ic = $("#installClose"); if (ic) ic.onclick = closeModals; }
   $$(".about-overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o) closeModals(); }));
 
   // ---------- header shrink ----------

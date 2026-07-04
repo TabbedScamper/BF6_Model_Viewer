@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css?v=2" />
-<link rel="stylesheet" href="model.css?v=3" />
+<link rel="stylesheet" href="model.css?v=4" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 </head>
 <body>
@@ -55,10 +55,10 @@
 <section class="statband" id="statband">
   <div class="statband-inner">
     <div class="header-stats" id="headerStats"></div>
-    <a class="libdl" id="libDl" href="#" hidden title="Download the full high-poly library as one archive (for the Godot plugin)">
+    <button class="libdl" id="libDl" hidden title="How to install the full high-poly library (for the Godot plugin)">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-      <span>Download Library <b id="libDlSize"></b></span>
-    </a>
+      <span>Get the Library <b id="libDlSize"></b></span>
+    </button>
     <div class="madeby">MADE BY TABBEDSCAMPER</div>
   </div>
 </section>
@@ -74,6 +74,49 @@
       <p>Every model here is the actual mesh from <b>Battlefield&nbsp;6</b> / Portal, extracted straight from the game's own asset files &mdash; nothing remodelled.</p>
       <p>Each prop's high-poly <code>MeshSet</code> is converted to geometry with correct UVs, and its textures are pulled from the same asset folder and assigned by the <b>role declared in each texture's own header</b> (<code>World_BaseColor</code>, <code>World_Normal</code>). Colour and normal maps are decoded from BC7 and applied exactly as the game binds them, giving a <b>pixel-perfect</b> surface for direct-textured props.</p>
       <p class="about-note">Models are shown at web-optimised texture resolution for fast browsing. Meshes and textures are from Battlefield&nbsp;6 / Portal (&copy; EA &amp; DICE), extracted for reference and modding use.</p>
+    </div>
+  </div>
+</div>
+
+<!-- install guide modal -->
+<div class="about-overlay" id="installOverlay" hidden>
+  <div class="about" role="dialog" aria-label="How to install the high-poly library">
+    <div class="about-head">
+      <h2>Install the High-Poly Library</h2>
+      <button id="installClose" class="about-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="about-body">
+      <p class="install-lead">This library feeds the <b>High-Poly Godot plugin</b> for the BF6 Portal SDK &mdash; it swaps the editor's low-poly placeholders for the real game models while you build. You only download it <b>once</b>.</p>
+
+      <div class="install-cta-row">
+        <a class="dl-cta" id="installDlBtn" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg> Download Library <b id="installDlSize"></b></a>
+        <span class="install-note-inline">or use the plugin's built-in <b>Download Full Library</b> button (recommended &mdash; it installs itself)</span>
+      </div>
+
+      <h3 class="about-sub">Recommended &mdash; let the plugin do it</h3>
+      <ol class="about-steps">
+        <li>Install the <b>High-Poly plugin</b> in your Portal SDK Godot project and enable it (Project &rarr; Project Settings &rarr; Plugins).</li>
+        <li>Open the <b>High-Poly</b> dock and click <b>Download Full Library</b>. It downloads and installs everything automatically &mdash; no manual unzipping.</li>
+        <li>Let the first import finish (Godot imports thousands of models once; this is slow only the first time).</li>
+        <li>Pick <b>Medium</b> or <b>High-Poly</b> mode and build. Done.</li>
+      </ol>
+
+      <h3 class="about-sub">Manual install (from this download)</h3>
+      <ol class="about-steps">
+        <li>Download the <code>.zip</code> above.</li>
+        <li>Extract it into your Godot project folder so the models land in <code>res://highpoly/</code> (the zip already contains the <code>highpoly/</code> folder &mdash; extract it at the project root).</li>
+        <li>Back in Godot, let the import finish, then use the plugin as above.</li>
+      </ol>
+
+      <div class="install-update">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 14-5.3L21 9M20 12a8 8 0 0 1-14 5.3L3 15M21 4v5h-5M3 20v-5h5"/></svg>
+        <div>
+          <b>You only download the full pack once.</b>
+          After that, whenever models are corrected or added, just click <b>Update Models</b> in the plugin dock &mdash; it compares your local files against the registry and downloads <b>only what changed</b> (usually a few small files, not the whole pack).
+        </div>
+      </div>
+
+      <p class="about-note">The library is browse-only here; models are served for use through the Godot plugin. Meshes &amp; textures are from Battlefield&nbsp;6 / Portal (&copy; EA &amp; DICE), extracted for reference and modding use.</p>
     </div>
   </div>
 </div>
@@ -167,6 +210,6 @@
 <div class="toast" id="toast"></div>
 
 <script src="config.js?v=3"></script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>

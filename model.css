@@ -145,3 +145,16 @@
 .libdl:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,107,26,.6);filter:brightness(1.05)}
 .libdl .ico{width:18px;height:18px}
 .libdl b{font-family:'BF Mono','JetBrains Mono',monospace;font-weight:400;opacity:.85}
+
+/* ---------- install guide modal ---------- */
+.install-lead{font-size:.98rem;color:var(--txt2)}
+.install-lead b{color:var(--txt)}
+.install-cta-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:18px 0 6px;
+  padding:14px;background:rgba(255,107,26,.06);border:1px solid var(--line-h);border-radius:12px}
+.install-note-inline{font-size:.8rem;color:var(--txt2);max-width:280px;line-height:1.4}
+.install-note-inline b{color:var(--cyan)}
+.install-update{display:flex;gap:13px;align-items:flex-start;margin:20px 0 6px;padding:15px;
+  background:rgba(63,224,138,.07);border:1px solid rgba(63,224,138,.32);border-radius:12px}
+.install-update svg{width:24px;height:24px;flex:none;color:var(--green);margin-top:1px}
+.install-update b{color:var(--txt)}
+.install-update div{font-size:.9rem;color:var(--txt2);line-height:1.5}
