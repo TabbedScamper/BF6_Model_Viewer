@@ -136,3 +136,12 @@
 /* viewer verify buttons active */
 .mv-ok.on{background:#3fe08a;border-color:#3fe08a;color:#062012}
 .mv-bad.on{background:#ffb24d;border-color:#ffb24d;color:#1a1204}
+
+/* ---------- full-library download CTA ---------- */
+.libdl{display:inline-flex;align-items:center;gap:9px;margin-top:4px;padding:9px 18px;border-radius:11px;
+  font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:.82rem;font-weight:700;
+  color:#1a0d03;background:var(--grad);border:1px solid rgba(255,154,77,.6);box-shadow:0 6px 20px rgba(255,107,26,.4);
+  text-decoration:none;transition:var(--ease)}
+.libdl:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,107,26,.6);filter:brightness(1.05)}
+.libdl .ico{width:18px;height:18px}
+.libdl b{font-family:'BF Mono','JetBrains Mono',monospace;font-weight:400;opacity:.85}

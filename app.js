@@ -76,6 +76,21 @@
     console.error(err);
   });
 
+  // ---------- full-library bundle download ----------
+  (function libBundle() {
+    const a = document.getElementById("libDl");
+    if (!a || !CFG.modelsBase) return;
+    fetch(CFG.modelsBase + "bundles/bundles.json", { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null).then(m => {
+        if (!m || !m.file) return;
+        a.href = CFG.modelsBase + m.file;
+        const gb = (m.bytes || 0) / 1e9;
+        document.getElementById("libDlSize").textContent =
+          gb >= 1 ? "(" + gb.toFixed(1) + " GB)" : "(" + Math.round((m.bytes || 0) / 1e6) + " MB)";
+        a.hidden = false;
+      }).catch(() => {});
+  })();
+
   // ---------- stats (count-up) ----------
   function buildStats() {
     const live = ALL.filter(p => !p.destroyed && !p.dup);   // destruction variants + wrapper dupes hidden

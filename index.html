@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css?v=2" />
-<link rel="stylesheet" href="model.css?v=2" />
+<link rel="stylesheet" href="model.css?v=3" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 </head>
 <body>
@@ -55,6 +55,10 @@
 <section class="statband" id="statband">
   <div class="statband-inner">
     <div class="header-stats" id="headerStats"></div>
+    <a class="libdl" id="libDl" href="#" hidden title="Download the full high-poly library as one archive (for the Godot plugin)">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      <span>Download Library <b id="libDlSize"></b></span>
+    </a>
     <div class="madeby">MADE BY TABBEDSCAMPER</div>
   </div>
 </section>
@@ -163,6 +167,6 @@
 <div class="toast" id="toast"></div>
 
 <script src="config.js?v=3"></script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
