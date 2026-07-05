@@ -5925,8 +5925,8 @@ Pine_01_L	tr_com_pine_01_l_a	1.0	auto-dims
 Pine_01_M	tr_com_pine_01_m_a	1.0	auto-dims
 PlanterConcrete_01	com_planterconcrete_01_256	0.991	strong
 PortableLamp_Rect_01	lf_ind_portablelamp_rect_01	1.0	auto-dims
-Pylon_01_A	bd_ind_pylon_01	0.991	strong
-Pylon_01_B	bd_ind_pylon_01	0.991	strong
+Pylon_01_A	ind_pylon_01	1.0	manual
+Pylon_01_B	ind_pylon_01	1.0	manual
 RuinHouseWall_01_B_512x120x32	com_ruinhousewall_01_b_512x120x64	0.991	strong
 ServerShellDestroy	com_servershelldestroy_01_a	0.991	strong
 ServiceBuilding_02_F2P	br_ind_servicebuilding_02	0.991	strong
