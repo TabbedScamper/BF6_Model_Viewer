@@ -50,6 +50,9 @@ def make_plugin_manifest(man):
                               "med_glb": "godot-med/%s.glb" % e["name"],
                               "med_hash": e.get("gmhash"),
                               "v": e.get("v", 1)}
+        if e.get("asm"):
+            # prefab-assembled, exact game-space build: plugin skips auto-fit
+            out["props"][prox]["nofit"] = True
     return out
 
 def main():
