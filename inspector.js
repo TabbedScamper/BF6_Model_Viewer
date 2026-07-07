@@ -345,7 +345,7 @@ export function open(url, modelName, mount, statusEl) {
       const offEl = document.createElement('div');
       offEl.className = 'region';
       offEl.textContent = 'drag box = realign · corner = scale — only inside your selection';
-      let swapLike = null;
+      let swapLike = null, customTexture = null;
       const applyAlign = () => {
         const su = frac.w / frac0.w, sv = frac.h / frac0.h;
         const ou = frac.x - frac0.x * su, ov = frac.y - frac0.y * sv;
@@ -353,6 +353,7 @@ export function open(url, modelName, mount, statusEl) {
         curMap().offset.set(ou, ov);
         offEl.innerHTML = `<span style="user-select:all">align: ${surfKey} scale=[${su.toFixed(4)},${sv.toFixed(4)}] offset=[${ou.toFixed(4)},${ov.toFixed(4)}]</span>`;
         recordFix({ model: modelName, surface: surfKey, material: matName, swapLike,
+                    customTexture,
                     scale: [+su.toFixed(4), +sv.toFixed(4)],
                     offset: [+ou.toFixed(4), +ov.toFixed(4)],
                     region: [+uMin.toFixed(3), +vMin.toFixed(3), +uMax.toFixed(3), +vMax.toFixed(3)] });
@@ -442,6 +443,39 @@ export function open(url, modelName, mount, statusEl) {
         panel.appendChild(lbl);
         panel.appendChild(strip);
       }
+      // no matching game sheet anywhere? show us what it SHOULD look like:
+      // upload an image (e.g. an in-game screenshot) — it previews live and
+      // travels inside the exported fix as a reference for locating the real
+      // game texture
+      const upWrap = document.createElement('div');
+      upWrap.className = 'hint';
+      upWrap.innerHTML = '<u style="cursor:pointer">upload custom texture… (reference for a missing sheet)</u>';
+      const upIn = document.createElement('input');
+      upIn.type = 'file'; upIn.accept = 'image/*'; upIn.style.display = 'none';
+      upWrap.appendChild(upIn);
+      upWrap.querySelector('u').onclick = () => upIn.click();
+      upIn.onchange = () => {
+        const f = upIn.files[0];
+        if (!f) return;
+        const img = new Image();
+        img.onload = () => {
+          const nt = new THREE.Texture(img);
+          nt.flipY = false; nt.colorSpace = THREE.SRGBColorSpace;
+          nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.needsUpdate = true;
+          alignMat.map = nt; alignMat.needsUpdate = true;
+          swapLike = null;
+          const c = document.createElement('canvas');
+          const s = Math.min(1, 512 / img.width);
+          c.width = Math.max(img.width * s, 1); c.height = Math.max(img.height * s, 1);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          customTexture = c.toDataURL('image/jpeg', 0.85);
+          drawAll(); applyAlign();
+          offEl.innerHTML = `<span style="user-select:all">custom: ${surfKey} — reference image attached</span> · align it, then Export fixes`;
+          URL.revokeObjectURL(img.src);
+        };
+        img.src = URL.createObjectURL(f);
+      };
+      panel.appendChild(upWrap);
     }
     panel.style.display = 'block';
   }
@@ -510,6 +544,7 @@ export function open(url, modelName, mount, statusEl) {
     const [member, siStr] = String(fix.surface).split(':s');
     const rx = new RegExp('^' + member.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '_s' + siStr + '(_|$)');
     let count = 0;
+    const customMats = [];
     current.traverse(o => {
       if (!o.isMesh || !rx.test(o.name) || !o.material) return;
       const pos = o.geometry.attributes.position, uva = o.geometry.attributes.uv;
@@ -550,11 +585,25 @@ export function open(url, modelName, mount, statusEl) {
         mat.map = nt;
       }
       mat.polygonOffset = true; mat.polygonOffsetFactor = -2; mat.polygonOffsetUnits = -2;
+      if (fix.customTexture) customMats.push(mat);
       const om = new THREE.Mesh(g, mat);
       scene.add(om);
       importedOverlays.push(om);
       count++;
     });
+    if (fix.customTexture && customMats.length) {
+      const img = new Image();
+      img.onload = () => {
+        const nt = new THREE.Texture(img);
+        nt.flipY = false; nt.colorSpace = THREE.SRGBColorSpace;
+        nt.wrapS = nt.wrapT = THREE.RepeatWrapping;
+        nt.repeat.set(fix.scale[0], fix.scale[1]);
+        nt.offset.set(fix.offset[0], fix.offset[1]);
+        nt.needsUpdate = true;
+        customMats.forEach(m => { m.map = nt; m.needsUpdate = true; });
+      };
+      img.src = fix.customTexture;
+    }
     return count > 0;
   }
 
