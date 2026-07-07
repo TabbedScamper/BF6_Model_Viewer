@@ -158,3 +158,28 @@
 .install-update svg{width:24px;height:24px;flex:none;color:var(--green);margin-top:1px}
 .install-update b{color:var(--txt)}
 .install-update div{font-size:.9rem;color:var(--txt2);line-height:1.5}
+
+/* ---------- desktop inspector (expanded viewer) ---------- */
+.mv-inspect{position:relative;overflow:hidden}
+.mv-inspect .insp-view{position:absolute;inset:0}
+.mv-inspect .insp-view canvas{display:block;width:100%;height:100%}
+.mv-inspect .insp-hud{position:absolute;top:8px;left:10px;z-index:5;display:flex;gap:8px;align-items:center;
+  background:rgba(13,15,18,.82);padding:6px 10px;border-radius:8px;font-size:.82rem}
+.mv-inspect .insp-hud label{display:flex;gap:5px;align-items:center;color:var(--txt2);cursor:pointer}
+.mv-inspect .insp-hud button{background:#2a2f36;color:var(--txt);border:1px solid #3c434c;border-radius:6px;
+  padding:4px 10px;font-size:.8rem;cursor:pointer}
+.mv-inspect .insp-hud button:hover{background:#39414b}
+.mv-inspect .insp-panel{position:absolute;right:0;top:0;width:270px;max-height:100%;overflow-y:auto;z-index:5;
+  background:rgba(13,15,18,.9);padding:12px 14px;font-size:.8rem;line-height:1.5;border-bottom-left-radius:10px}
+.mv-inspect .insp-panel .mat{color:#ffd479;font-weight:700;font-size:.9rem}
+.mv-inspect .insp-panel b{color:#7ec4ff}
+.mv-inspect .insp-panel .region{color:#7ee29a;margin-top:6px;user-select:all;word-break:break-all}
+.mv-inspect .insp-panel .hint{color:var(--txt2);font-size:.74rem;margin-top:6px}
+.mv-inspect .insp-panel canvas{width:100%;border-radius:4px;margin-top:6px}
+.mv-inspect .insp-strip{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;max-height:110px;overflow-y:auto}
+.mv-inspect .insp-strip canvas{width:44px !important;height:44px;border:1px solid #3c434c;border-radius:3px;cursor:pointer;margin-top:0}
+.mv-inspect .insp-big{position:absolute;inset:0;background:rgba(8,9,11,.92);z-index:9;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.mv-inspect .insp-big canvas{max-width:92%;max-height:82%;border:1px solid #3c434c}
+.mv-inspect .insp-big .closer{color:var(--txt);cursor:pointer;background:#2a2f36;
+  border:1px solid #3c434c;border-radius:6px;padding:6px 14px;font-size:.85rem}

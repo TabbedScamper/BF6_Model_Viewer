@@ -12,6 +12,12 @@
 <link rel="stylesheet" href="style.css?v=2" />
 <link rel="stylesheet" href="model.css?v=4" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
 </head>
 <body>
 
@@ -203,6 +209,7 @@
     <model-viewer id="mvBig" class="mv-big" camera-controls interaction-prompt="none"
       camera-orbit="-25deg 78deg auto" shadow-intensity="0.9" exposure="1.0" environment-image="neutral"
       min-field-of-view="10deg" max-field-of-view="55deg"></model-viewer>
+    <div id="mvInspect" class="mv-big mv-inspect" hidden></div>
     <div class="mv-hint" id="mvHint"></div>
   </div>
 </div>

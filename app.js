@@ -243,7 +243,10 @@
   }
 
   // ---------- grow-out expanded viewer ----------
-  const ov = $("#mvOverlay"), big = $("#mvBig");
+  // Desktop gets the full inspector (Godot camera, surface select/crop,
+  // live texture realign + fix export); phones keep the light spinner.
+  const ov = $("#mvOverlay"), big = $("#mvBig"), inspectEl = $("#mvInspect");
+  let inspector = null;                 // lazy-loaded module (desktop only)
   function openViewer(p) {
     cur = p;
     $("#mvName").textContent = displayName(p);
@@ -254,12 +257,29 @@
     // show the matching in-game asset name when the Portal name is what's headlined
     const ingame = (p.portalName && p.portalName !== p.name) ? `<span class="mv-ingame" title="In-game asset name">in-game: <code>${p.name}</code></span>` : "";
     $("#mvSub").innerHTML = `${fmtTris(p.tris)}${pill}${maps}${ingame}`;
-    $("#mvHint").textContent = isTouch ? "drag to orbit · pinch to zoom" : "drag to look around · scroll to zoom · right-drag to pan";
-    big.setAttribute("src", glbUrl(p));
-    big.setAttribute("camera-controls", "");
-    if (isTouch) big.setAttribute("disable-pan", ""); else big.removeAttribute("disable-pan");
-    big.removeAttribute("disable-zoom");
     reflectViewer(p.name);
+    if (!isTouch) {
+      $("#mvHint").textContent = "RMB = freelook + WASD fly (scroll = speed) · click = inspect surface · B = crop a region · drag its box on the sheet to realign";
+      big.style.display = "none";
+      big.removeAttribute("src");
+      inspectEl.hidden = false;
+      const boot = mod => { inspector = mod; mod.open(glbUrl(p), p.name, inspectEl, $("#mvHint")); };
+      if (inspector) boot(inspector);
+      else import("./inspector.js?v=1").then(boot).catch(() => {
+        // inspector failed (old browser?) — fall back to the spinner
+        inspectEl.hidden = true;
+        big.style.display = "";
+        big.setAttribute("src", glbUrl(p));
+      });
+    } else {
+      $("#mvHint").textContent = "drag to orbit · pinch to zoom";
+      inspectEl.hidden = true;
+      big.style.display = "";
+      big.setAttribute("src", glbUrl(p));
+      big.setAttribute("camera-controls", "");
+      big.setAttribute("disable-pan", "");
+      big.removeAttribute("disable-zoom");
+    }
     ov.hidden = false;
     requestAnimationFrame(() => ov.classList.add("show"));
   }
@@ -267,12 +287,22 @@
   $("#mvBad").onclick = () => cur && setV(cur.name, "bad");
   function closeViewer() {
     ov.classList.remove("show");
-    setTimeout(() => { ov.hidden = true; big.removeAttribute("src"); }, 340);
+    if (inspector) inspector.close();
+    setTimeout(() => { ov.hidden = true; big.removeAttribute("src"); inspectEl.hidden = true; }, 340);
   }
   $("#mvClose").onclick = closeViewer;
   ov.addEventListener("click", e => { if (e.target === ov) closeViewer(); });
   $("#mvReset").onclick = () => { try { big.resetTurntableRotation(); big.jumpCameraToGoal(); } catch (e) {} big.cameraOrbit = "auto auto auto"; };
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeViewer(); closeModals(); } });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    // let an active inspector selection / maximized sheet consume Esc first
+    if (!ov.hidden && !isTouch && inspectEl && !inspectEl.hidden) {
+      const p = inspectEl.querySelector(".insp-panel");
+      const bt = inspectEl.querySelector(".insp-big");
+      if ((p && p.style.display === "block") || (bt && bt.style.display !== "none")) return;
+    }
+    closeViewer(); closeModals();
+  });
 
   // ---------- infinite scroll ----------
   new IntersectionObserver(es => {
