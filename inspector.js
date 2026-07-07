@@ -153,11 +153,19 @@ export function open(url, modelName, mount, statusEl) {
     }
   }, sig);
   renderer.domElement.addEventListener('wheel', e => {
-    if (!flying) return;
-    e.preventDefault();
-    flySpeedMult = Math.max(0.05, Math.min(30, flySpeedMult * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
-    status(`fly speed ×${flySpeedMult.toFixed(2)}`);
-  }, { passive: false, signal: abort.signal });
+    if (flying) {
+      e.preventDefault();
+      flySpeedMult = Math.max(0.05, Math.min(30, flySpeedMult * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
+      status(`fly speed ×${flySpeedMult.toFixed(2)}`);
+      return;
+    }
+    // zoom must never change orientation: re-anchor the orbit pivot straight
+    // ahead at the current distance BEFORE OrbitControls dollies, so a stale
+    // pivot (left behind by freelook) can't snap/teleport the camera
+    const fwd = new THREE.Vector3(); cam.getWorldDirection(fwd);
+    const dist = Math.max(cam.position.distanceTo(controls.target), 0.5);
+    controls.target.copy(cam.position).addScaledVector(fwd, dist);
+  }, { passive: false, signal: abort.signal, capture: true });
   function flyStep() {
     if (!flying) return;
     const sp = frameSize * 0.010 * flySpeedMult * (flyKeys['shift'] ? 3 : 1);
