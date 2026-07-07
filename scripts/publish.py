@@ -48,11 +48,8 @@ def make_plugin_manifest(man):
         entry = {"glb": "godot/%s.glb" % e["name"],
                  "hash": e.get("ghash") or e.get("hash"),
                  "v": e.get("v", 1)}
-        # only advertise a med rendition when one actually exists — a med_glb
-        # path with a null hash makes downstream consumers chase a 404
-        if e.get("gmhash"):
-            entry["med_glb"] = "godot-med/%s.glb" % e["name"]
-            entry["med_hash"] = e["gmhash"]
+        # medium tier retired: high-poly is the only downloadable rendition
+        # ("no textures" mode is a runtime override, not separate data)
         if e.get("asm"):
             # prefab-assembled, exact game-space build: plugin skips auto-fit
             entry["nofit"] = True
