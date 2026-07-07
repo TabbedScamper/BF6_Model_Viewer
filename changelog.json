@@ -1,0 +1,34 @@
+{
+ "entries": [
+  {
+   "date": "2026-07-07",
+   "title": "Abbasid overhaul + desktop inspector",
+   "site": [
+    "New desktop viewer: Godot-style camera (RMB freelook + WASD fly, scroll adjusts speed)",
+    "Edit mode: inspect any surface, crop a wall region, realign/scale its texture live, swap sheets, and export fixes as JSON",
+    "Import fixes to preview community texture corrections on any model",
+    "Maximize button on the expanded viewer",
+    "Fixed assembled models not appearing under their map tab",
+    "Version history (this panel)"
+   ],
+   "models": [
+    "Mural_01", "PlanterRectangularTall_01", "PlanterBoulevard_03", "TreesPennantsPlaza_01",
+    "StreetLightPoleElegant_01_A", "WreckTank_Abra01", "WreckTank_Leopard_02",
+    "VendingMachine_01_Abbasid", "WoodCratePack_01", "OutskirtsHouseMedium_03_Abbasid_Mirrored",
+    "GM1083CargoTruck_01_Canopy", "SoukHouse_02_1024x1152_CV90_Interior_F", "WaterTank_01",
+    "SoukHouse_02_1024x1152_CV90", "SoukHouse_02_1024x1152_CV90_A_Propdress_A",
+    "SoukHouse_02_1024x1152_CV90_Interior_A", "GCarSedan_02_OpenDoors_02", "PlanterConcrete_01",
+    "SoukHouse_01_1280x1536", "SoukHouse_01_1280x1536_A_Interior_B",
+    "Soukhouse_01_1280x1536_A_Propdress_C", "OutskirtsHouseMedium_04_Abbasid_Mirrored_BD",
+    "SoukHouse_01_1024x1536_A_BD", "SoukHouse_01_1024x1536_A_Propdress_A",
+    "SoukHouse_01_1024x1536_A_Propdress_B", "Building_03", "GarbageCluster_02_A", "Palace_01",
+    "SoukHouse_01_1280x1536_A_Interior_A", "SoukHouse_01_1024x1536_Double",
+    "SoukHouse_01_1024x1536_Double_A_Propdress_A", "BusOnSide_Occluders",
+    "SoukHousePassage_01_768x768_A_Propdress_Interior_B", "SoukHouse_05_768x768_A_Propdress_Interior",
+    "PostersTorn_05", "PostersTorn_01", "GMetroBus_01_AbbasidOpen", "SandBagsEnd_01_192x120",
+    "WallLampFancy_01", "DebrisPileSoukInteriorCenter_01"
+   ],
+   "note": "First wave of prefab-assembled models: composite objects (souk houses, wreck tanks, prop-dressed vehicles, the palace) are now built exactly as the game builds them, with real textures for interiors, vegetation and shared materials."
+  }
+ ]
+}

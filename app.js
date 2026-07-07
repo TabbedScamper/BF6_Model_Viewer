@@ -247,8 +247,10 @@
   // live texture realign + fix export); phones keep the light spinner.
   const ov = $("#mvOverlay"), big = $("#mvBig"), inspectEl = $("#mvInspect");
   let inspector = null;                 // lazy-loaded module (desktop only)
+  let closeTimer = null;
   function openViewer(p) {
     cur = p;
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
     $("#mvName").textContent = displayName(p);
     const pill = !p.portal ? `<span class="pill no">Not in Portal</span>`
       : p.global ? `<span class="pill glob">Global · every map</span>`
@@ -259,7 +261,7 @@
     $("#mvSub").innerHTML = `${fmtTris(p.tris)}${pill}${maps}${ingame}`;
     reflectViewer(p.name);
     if (!isTouch) {
-      $("#mvHint").textContent = "RMB = freelook + WASD fly (scroll = speed) · click = inspect surface · B = crop a region · drag its box on the sheet to realign";
+      $("#mvHint").textContent = "drag = orbit · scroll = zoom · RMB = freelook + WASD fly (scroll = speed) · ✎ Edit to inspect & fix textures";
       big.style.display = "none";
       big.removeAttribute("src");
       inspectEl.hidden = false;
@@ -288,11 +290,16 @@
   function closeViewer() {
     ov.classList.remove("show");
     if (inspector) inspector.close();
-    setTimeout(() => { ov.hidden = true; big.removeAttribute("src"); inspectEl.hidden = true; }, 340);
+    closeTimer = setTimeout(() => { ov.hidden = true; big.removeAttribute("src"); inspectEl.hidden = true; closeTimer = null; }, 340);
   }
   $("#mvClose").onclick = closeViewer;
   ov.addEventListener("click", e => { if (e.target === ov) closeViewer(); });
   $("#mvReset").onclick = () => { try { big.resetTurntableRotation(); big.jumpCameraToGoal(); } catch (e) {} big.cameraOrbit = "auto auto auto"; };
+  $("#mvMax").onclick = () => {
+    const st = $("#mvStage");
+    const on = st.classList.toggle("mv-full");
+    $("#mvMax").classList.toggle("on", on);
+  };
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
     // let an active inspector selection / maximized sheet consume Esc first
@@ -352,6 +359,39 @@
   $("#creditsBtn").onclick = () => openM("#creditsOverlay");
   $("#aboutClose").onclick = closeModals;
   $("#creditsClose").onclick = closeModals;
+
+  // ---------- version history ----------
+  $("#newsBtn").onclick = () => { openM("#newsOverlay"); loadNews(); };
+  $("#newsClose").onclick = closeModals;
+  let newsLoaded = false;
+  function loadNews() {
+    if (newsLoaded) return;
+    fetch("changelog.json", { cache: "no-store" }).then(r => r.json()).then(doc => {
+      newsLoaded = true;
+      const body = $("#newsBody");
+      body.innerHTML = (doc.entries || []).map(en => {
+        const site = (en.site || []).length
+          ? `<h3 class="about-sub">Site fixes</h3><ul class="news-list">${en.site.map(s => `<li>${s}</li>`).join("")}</ul>` : "";
+        const models = (en.models || []).length
+          ? `<h3 class="about-sub">Models updated (${en.models.length})</h3>
+             <div class="news-models">${en.models.map(m => `<button class="news-model" data-m="${m}">${m}</button>`).join("")}</div>` : "";
+        return `<div class="news-entry">
+          <div class="news-date">${en.date}${en.title ? " — " + en.title : ""}</div>
+          ${en.note ? `<p class="news-note">${en.note}</p>` : ""}
+          ${site}${models}
+        </div>`;
+      }).join("") || '<p class="about-note">No entries yet.</p>';
+      // clicking a model name searches for it
+      body.querySelectorAll(".news-model").forEach(b => b.onclick = () => {
+        closeModals();
+        const s = $("#search");
+        s.value = b.dataset.m; term = b.dataset.m;
+        $(".search").classList.add("has-text");
+        applyFilters();
+        s.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }).catch(() => { $("#newsBody").innerHTML = '<p class="about-note">Could not load the changelog.</p>'; });
+  }
   { const ic = $("#installClose"); if (ic) ic.onclick = closeModals; }
   $$(".about-overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o) closeModals(); }));
 

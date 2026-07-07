@@ -30,10 +30,13 @@ export function open(url, modelName, mount, statusEl) {
   const sig = { signal: abort.signal };
   mount.innerHTML = `
     <div class="insp-hud">
-      <label><input type="checkbox" class="i-crop"> crop mode (B)</label>
-      <button class="i-export">Export fixes</button>
-      <button class="i-import">Import fixes</button>
-      <input type="file" class="i-file" accept=".json" style="display:none">
+      <button class="i-edit" title="Inspect surfaces, realign textures, export fixes">&#9998; Edit</button>
+      <span class="i-tools" hidden>
+        <label><input type="checkbox" class="i-crop"> crop mode (B)</label>
+        <button class="i-export">Export fixes</button>
+        <button class="i-import">Import fixes</button>
+        <input type="file" class="i-file" accept=".json" style="display:none">
+      </span>
     </div>
     <div class="insp-panel" style="display:none"></div>
     <div class="insp-big" style="display:none"></div>
@@ -56,8 +59,23 @@ export function open(url, modelName, mount, statusEl) {
   const sun2 = new THREE.DirectionalLight(0xdfe8ff, 0.7); sun2.position.set(-50, 40, -60); scene.add(sun2);
   const grid = new THREE.GridHelper(200, 100, 0x3a4048, 0x2c3138); scene.add(grid);
 
-  const defHint = statusEl ? statusEl.textContent : '';
+  let defHint = statusEl ? statusEl.textContent : '';
   const status = t => { if (statusEl) statusEl.textContent = t || defHint; };
+  // view-first: editing tools stay hidden until the user opts in
+  let editMode = false;
+  $('.i-edit').onclick = () => {
+    editMode = !editMode;
+    $('.i-tools').hidden = !editMode;
+    $('.i-edit').classList.toggle('on', editMode);
+    if (editMode) {
+      defHint = 'click = inspect surface · B = crop a region · drag its box on the sheet to realign · X = isolate · Esc = deselect';
+    } else {
+      defHint = 'drag = orbit · scroll = zoom · RMB = freelook + WASD fly (scroll = speed) · ✎ Edit to inspect & fix textures';
+      $('.i-crop').checked = false;
+      clearPick();
+    }
+    status('');
+  };
   S = { abort, renderer, mount, raf: 0 };
   let current = null, frameSize = 20;
 
@@ -100,8 +118,8 @@ export function open(url, modelName, mount, statusEl) {
       if (bigEl.style.display !== 'none') { bigEl.style.display = 'none'; return; }
       clearPick();
     }
-    if (e.key === 'b' || e.key === 'B') $('.i-crop').checked = !$('.i-crop').checked;
-    if ((e.key === 'x' || e.key === 'X') && picked && current) {
+    if ((e.key === 'b' || e.key === 'B') && editMode) $('.i-crop').checked = !$('.i-crop').checked;
+    if ((e.key === 'x' || e.key === 'X') && editMode && picked && current) {
       isolated = !isolated;
       current.traverse(o => { if (o.isMesh) o.visible = isolated ? (o === picked) : true; });
     }
@@ -430,7 +448,7 @@ export function open(url, modelName, mount, statusEl) {
 
   renderer.domElement.addEventListener('pointerdown', e => {
     downPos = [e.clientX, e.clientY];
-    if ($('.i-crop').checked && e.button === 0 && current) {
+    if (editMode && $('.i-crop').checked && e.button === 0 && current) {
       if (!lockedPlane) {
         const hit = meshAt(e.clientX, e.clientY);
         if (hit) { doPickHit(hit); status('work plane locked — drag to sketch the box'); }
@@ -456,7 +474,7 @@ export function open(url, modelName, mount, statusEl) {
     if (!downPos) return;
     const moved = Math.hypot(e.clientX - downPos[0], e.clientY - downPos[1]);
     downPos = null;
-    if (moved < 5 && e.button === 0) {
+    if (editMode && moved < 5 && e.button === 0) {
       const hit = current && meshAt(e.clientX, e.clientY);
       if (hit) doPickHit(hit); else clearPick();
     }

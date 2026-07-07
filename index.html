@@ -47,6 +47,7 @@
     </div>
     <div class="ver" title="Library version"><span class="v100">V1.00</span></div>
     <nav class="topnav" aria-label="Site">
+      <button class="topnav-tab" id="newsBtn">What's New</button>
       <button class="topnav-tab" id="creditsBtn">Credits</button>
       <button class="topnav-tab" id="aboutBtn">Info</button>
       <a class="discord-btn" href="https://discord.gg/qFJU3PadJG" target="_blank" rel="noopener" title="Join the Battlefield Portal Hub Discord">
@@ -80,6 +81,19 @@
       <p>Every model here is the actual mesh from <b>Battlefield&nbsp;6</b> / Portal, extracted straight from the game's own asset files &mdash; nothing remodelled.</p>
       <p>Each prop's high-poly <code>MeshSet</code> is converted to geometry with correct UVs, and its textures are pulled from the same asset folder and assigned by the <b>role declared in each texture's own header</b> (<code>World_BaseColor</code>, <code>World_Normal</code>). Colour and normal maps are decoded from BC7 and applied exactly as the game binds them, giving a <b>pixel-perfect</b> surface for direct-textured props.</p>
       <p class="about-note">Models are shown at web-optimised texture resolution for fast browsing. Meshes and textures are from Battlefield&nbsp;6 / Portal (&copy; EA &amp; DICE), extracted for reference and modding use.</p>
+    </div>
+  </div>
+</div>
+
+<!-- version history modal -->
+<div class="about-overlay" id="newsOverlay" hidden>
+  <div class="about" role="dialog" aria-label="Version history">
+    <div class="about-head">
+      <h2>What's New</h2>
+      <button id="newsClose" class="about-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="about-body" id="newsBody">
+      <p class="about-note">Loading…</p>
     </div>
   </div>
 </div>
@@ -203,6 +217,7 @@
         <button class="mv-btn mv-ok" id="mvOk" title="Looks right (verify)">&#10003;</button>
         <button class="mv-btn mv-bad" id="mvBad" title="Looks wrong (flag)">&#10007;</button>
         <button class="mv-btn" id="mvReset" title="Reset view">&#8635;</button>
+        <button class="mv-btn" id="mvMax" title="Maximize viewport">&#x26F6;</button>
         <button class="mv-btn mv-close" id="mvClose" title="Close" aria-label="Close">&times;</button>
       </div>
     </div>
