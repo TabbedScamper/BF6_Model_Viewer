@@ -10,7 +10,10 @@
     "Import fixes to preview community texture corrections on any model",
     "Maximize button on the expanded viewer",
     "Fixed assembled models not appearing under their map tab",
-    "Version history (this panel)"
+    "Version history (this panel)",
+    "Fixed camera snapping to a stale orientation when scrolling after freelook",
+    "Custom texture upload: attach a reference image (e.g. an in-game screenshot) to a fix when no game sheet matches",
+    "Godot plugin v1.4.0: simplified detail modes (Low / High no-textures / High textured), Medium tier retired"
    ],
    "models": [
     "Mural_01",
