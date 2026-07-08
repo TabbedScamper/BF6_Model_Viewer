@@ -53,6 +53,9 @@ export function open(url, modelName, mount, statusEl) {
   const cam = new THREE.PerspectiveCamera(55, 1, 0.05, 5000);
   const controls = new OrbitControls(cam, renderer.domElement);
   controls.enableDamping = true;
+  // default zoomSpeed=1 dollies ~5% of the distance per wheel notch, which on
+  // building-sized models is meters per click — halve it for fine control
+  controls.zoomSpeed = 0.45;
   controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: null };
   scene.add(new THREE.HemisphereLight(0xffffff, 0x585d66, 1.15));
   const sun = new THREE.DirectionalLight(0xfff2df, 2.0); sun.position.set(60, 90, 40); scene.add(sun);

@@ -42,6 +42,20 @@ Match corrections (an SDK proxy pointing at the wrong game mesh) are a
 one-line PR to `data/matches.tsv` — set `tier` to `manual` so the fix is
 never regenerated over.
 
+## Versioning
+
+The version badge on the site **is** the released Godot plugin version — the
+page reads `plugin/plugin-version.json` from the registry at load (the same
+file the plugin's self-updater checks). Models themselves are rolling
+(content-hash versioned, see the changelog); the site/plugin version marks
+feature releases, and a plugin release bumps both at once with no extra step.
+
+## How it's all built
+
+The full pipeline — extraction, texture reconstruction, prefab assembly,
+the human review loop, and how a fix travels back into everyone's editor —
+is documented in [docs/HOW-MODELS-ARE-MADE.md](docs/HOW-MODELS-ARE-MADE.md).
+
 ## Repo layout
 
 - `index.html`, `app.js`, … — the viewer site

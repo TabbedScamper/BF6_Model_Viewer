@@ -76,6 +76,20 @@
     console.error(err);
   });
 
+  // ---------- version badge ----------
+  // RULE: the site version IS the released Godot plugin version — read live
+  // from the registry (plugin/plugin-version.json, the same file the plugin's
+  // self-updater checks), so a plugin release bumps both at once. The baked
+  // "V1.00" only shows if the registry is unreachable.
+  (function siteVersion() {
+    const el = document.getElementById("siteVer");
+    if (!el || !CFG.modelsBase) return;
+    fetch(CFG.modelsBase + "plugin/plugin-version.json", { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (j && j.version) el.textContent = "V" + j.version; })
+      .catch(() => {});
+  })();
+
   // ---------- full-library bundle download ----------
   (function libBundle() {
     const btn = document.getElementById("libDl");
@@ -369,20 +383,45 @@
     fetch("changelog.json", { cache: "no-store" }).then(r => r.json()).then(doc => {
       newsLoaded = true;
       const body = $("#newsBody");
+      // Three lanes per day — Plugin / Site / Models — grouped under version
+      // banners. A day that carries a plugin release ({plugin:{version,notes}})
+      // starts a new version section; rolling days nest under the last one.
+      // Big model waves collapse to a count that expands on demand.
+      const CHIP_LIMIT = 12;
+      let k = 0;
       body.innerHTML = (doc.entries || []).map(en => {
+        const banner = en.plugin && en.plugin.version
+          ? `<div class="news-version"><span class="news-vtag">v${en.plugin.version}</span>${en.plugin.notes ? " " + en.plugin.notes : ""}</div>` : "";
+        const plug = (en.pluginNotes || []).length
+          ? `<h3 class="about-sub">Plugin</h3><ul class="news-list">${en.pluginNotes.map(s => `<li>${s}</li>`).join("")}</ul>` : "";
         const site = (en.site || []).length
-          ? `<h3 class="about-sub">Site fixes</h3><ul class="news-list">${en.site.map(s => `<li>${s}</li>`).join("")}</ul>` : "";
-        const models = (en.models || []).length
-          ? `<h3 class="about-sub">Models updated (${en.models.length})</h3>
-             <div class="news-models">${en.models.map(m => `<button class="news-model" data-m="${m}">${m}</button>`).join("")}</div>` : "";
-        return `<div class="news-entry">
+          ? `<h3 class="about-sub">Site</h3><ul class="news-list">${en.site.map(s => `<li>${s}</li>`).join("")}</ul>` : "";
+        let models = "";
+        if ((en.models || []).length) {
+          const chips = en.models.map(m => `<button class="news-model" data-m="${m}">${m}</button>`).join("");
+          if (en.models.length > CHIP_LIMIT) {
+            const id = "nm" + (k++);
+            models = `<h3 class="about-sub">Models updated (${en.models.length})</h3>
+              <button class="news-model news-expand" data-t="${id}">show all ${en.models.length} models</button>
+              <div class="news-models" id="${id}" hidden>${chips}</div>`;
+          } else {
+            models = `<h3 class="about-sub">Models updated (${en.models.length})</h3>
+              <div class="news-models">${chips}</div>`;
+          }
+        }
+        return `${banner}<div class="news-entry">
           <div class="news-date">${en.date}${en.title ? " — " + en.title : ""}</div>
           ${en.note ? `<p class="news-note">${en.note}</p>` : ""}
-          ${site}${models}
+          ${plug}${site}${models}
         </div>`;
       }).join("") || '<p class="about-note">No entries yet.</p>';
+      // expanders
+      body.querySelectorAll(".news-expand").forEach(b => b.onclick = () => {
+        const box = document.getElementById(b.dataset.t);
+        if (box) { box.hidden = false; b.remove(); }
+      });
       // clicking a model name searches for it
-      body.querySelectorAll(".news-model").forEach(b => b.onclick = () => {
+      body.querySelectorAll(".news-model:not(.news-expand)").forEach(b => b.onclick = () => {
         closeModals();
         const s = $("#search");
         s.value = b.dataset.m; term = b.dataset.m;

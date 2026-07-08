@@ -39,7 +39,18 @@ def make_plugin_manifest(man):
     for ln in open(os.path.join(ROOT, "data", "matches.tsv"), encoding="utf-8"):
         p = ln.rstrip("\n").split("\t")
         if len(p) >= 4 and p[0] != "godot_proxy":
+            # none/weak rows are name-matcher noise: they map gameplay/logic
+            # proxies (Sector, MCOM, ...) or wildly wrong meshes, and matching
+            # them makes the plugin hide user geometry. Drop at the source.
+            if p[3] in ("none", "weak"):
+                continue
             match[p[0]] = p[1]
+    # interactable-door hinge specs (data/door_specs.json): the plugin's
+    # right-click door toggle swings `doorleaf_*` nodes baked into the model
+    doors = {}
+    dsp = os.path.join(ROOT, "data", "door_specs.json")
+    if os.path.exists(dsp):
+        doors = json.load(open(dsp, encoding="utf-8"))
     out = {"generated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
            "props": {}}
     for prox, game in match.items():
@@ -53,6 +64,8 @@ def make_plugin_manifest(man):
         if e.get("asm"):
             # prefab-assembled, exact game-space build: plugin skips auto-fit
             entry["nofit"] = True
+        if prox in doors:
+            entry["door"] = {"deg": doors[prox].get("deg", 85.0)}
         out["props"][prox] = entry
     return out
 
