@@ -231,7 +231,7 @@
           <button class="vbtn vbad" data-v="bad" title="Looks wrong">&#10007;</button>
         </div>
         <model-viewer src="${glbUrl(p)}" loading="lazy" reveal="auto" interaction-prompt="none"
-          camera-controls disable-zoom disable-tap disable-pan camera-orbit="-25deg 78deg auto"
+          ${isTouch ? "" : "camera-controls"} disable-zoom disable-tap disable-pan camera-orbit="-25deg 78deg auto"
           rotation-per-second="${CFG.spinSpeed || '42deg'}" exposure="1.0" environment-image="neutral"></model-viewer>
       </div>
       <div class="mcard-foot">
@@ -281,7 +281,7 @@
       inspectEl.hidden = false;
       const boot = mod => { inspector = mod; mod.open(glbUrl(p), p.name, inspectEl, $("#mvHint")); };
       if (inspector) boot(inspector);
-      else import("./inspector.js?v=1").then(boot).catch(() => {
+      else import("./inspector.js?v=2").then(boot).catch(() => {
         // inspector failed (old browser?) — fall back to the spinner
         inspectEl.hidden = true;
         big.style.display = "";

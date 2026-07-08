@@ -5,7 +5,9 @@
    "site": [
     "Finer scroll-wheel zoom in the viewer",
     "The site version now tracks the released Godot plugin version",
-    "What's New restructured: per-day plugin release banner, plugin/site/model lanes, long model lists collapse"
+    "What's New restructured: per-day plugin release banner, plugin/site/model lanes, long model lists collapse",
+    "Scroll-wheel zoom rebuilt: travel is proportional to the wheel delta (smooth-scroll mice no longer leap) and zoom can never snap the camera",
+    "Phones: model cards no longer grab one-finger scrolling \u2014 the page scrolls normally; orbit starts once you tap a model open"
    ],
    "models": [
     "GCar4x4_01",

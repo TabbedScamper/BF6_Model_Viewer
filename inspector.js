@@ -53,9 +53,11 @@ export function open(url, modelName, mount, statusEl) {
   const cam = new THREE.PerspectiveCamera(55, 1, 0.05, 5000);
   const controls = new OrbitControls(cam, renderer.domElement);
   controls.enableDamping = true;
-  // default zoomSpeed=1 dollies ~5% of the distance per wheel notch, which on
-  // building-sized models is meters per click — halve it for fine control
-  controls.zoomSpeed = 0.45;
+  // wheel zoom is handled manually below: OrbitControls steps per wheel EVENT
+  // (smooth-scroll mice fire dozens of small-delta events per notch = huge
+  // leaps) and r160 divides the delta by a TRUNCATED devicePixelRatio (0 when
+  // the browser is zoomed out → scale 0 → camera teleports onto the pivot)
+  controls.enableZoom = false;
   controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: null };
   scene.add(new THREE.HemisphereLight(0xffffff, 0x585d66, 1.15));
   const sun = new THREE.DirectionalLight(0xfff2df, 2.0); sun.position.set(60, 90, 40); scene.add(sun);
@@ -162,12 +164,19 @@ export function open(url, modelName, mount, statusEl) {
       status(`fly speed ×${flySpeedMult.toFixed(2)}`);
       return;
     }
-    // zoom must never change orientation: re-anchor the orbit pivot straight
-    // ahead at the current distance BEFORE OrbitControls dollies, so a stale
-    // pivot (left behind by freelook) can't snap/teleport the camera
+    // manual dolly, proportional to the wheel delta: one classic 120px notch
+    // moves 4% of the current distance, and a smooth-scroll mouse's burst of
+    // tiny deltas sums to exactly the same travel. Orientation never changes,
+    // and the orbit pivot re-anchors straight ahead so a stale pivot (left
+    // behind by freelook) can't snap/teleport the camera.
+    e.preventDefault();
+    const px = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+    const k = Math.pow(0.96, Math.max(-6, Math.min(6, -px / 120)));
     const fwd = new THREE.Vector3(); cam.getWorldDirection(fwd);
-    const dist = Math.max(cam.position.distanceTo(controls.target), 0.5);
+    const dist = Math.max(cam.position.distanceTo(controls.target), frameSize * 0.002);
+    const nd = Math.max(frameSize * 0.01, Math.min(frameSize * 12, dist * k));
     controls.target.copy(cam.position).addScaledVector(fwd, dist);
+    cam.position.copy(controls.target).addScaledVector(fwd, -nd);
   }, { passive: false, signal: abort.signal, capture: true });
   function flyStep() {
     if (!flying) return;
