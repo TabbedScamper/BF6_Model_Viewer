@@ -42,6 +42,25 @@ A mesh alone renders black or grey; the work is in the materials:
   parameters read from the mesh EBX, and bakes vista color/normal on top.
 - **Vegetation** gets its leaf cutout from the separate `Vegetation_Alpha`
   sheets (never basecolor alpha), with far-LOD billboard impostors dropped.
+  The leaf rules apply **only** to actual vegetation (folder/name gated) — a
+  truck's canvas "canopy" material must not inherit a tree-leaf cutout.
+- **Texture candidates are scored against material context.** A candidate
+  sheet whose distinctive name tokens (`dashboard`, `interior`, …) don't
+  appear in the submesh's material name is penalized, and a sheet is only
+  auto-picked when it wins uniquely. Names tokenize across letter↔digit
+  boundaries so `exterior01` and `M_…_Exterior_01` meet in the middle.
+- **Civilian vehicles and many decorated props bake their whole look** into a
+  per-object vista sheet (`vst_<mesh>_cs`) addressed by the bake UV channel —
+  the co-located "detail" sheets are only pieces (a dashboard, a decal). When
+  the exact-name vista sheet exists, it wins.
+- **Drivable-vehicle bodies mirror their UVs** (left half mirrored onto the
+  right, UV span ≈ 2): that still means UV0, not the bake channel — only real
+  tiling (span > 2.5) switches channels. Aircraft keep all paint in
+  `skins/<variant>/`; when a folder has no base sheets the most complete skin
+  is used.
+- **Alpha is only honored when it looks like a cutout** (mostly-opaque sheet
+  with a meaningful fully-transparent fraction). Wear/blend masks stored in
+  alpha channels otherwise punch holes in solid surfaces.
 
 Every rule above came from a human review loop (see §4) and is data-driven —
 pinned in TSV tables, not hardcoded per model.
@@ -68,6 +87,37 @@ Three repair classes exist for objects the original matcher got wrong:
 That last class is verified, not assumed: the only place those names occur
 in the retail data is the per-map spawn-name registries, so there is nothing
 to build from. They stay grey until better data exists.
+
+## 3b. Doors that open
+
+Interactable doors are the trickiest single meshes in the game: one MeshSet
+stores **both** states (intact leaf + destroyed splinters), sometimes with the
+node basis flipped so the "spare" state hides below the origin. The door
+builder classifies each connected component in **world space** against the
+measured SDK proxy box — components that land underground are alternate
+states and are dropped; the intact leaf is re-homed under a node **whose
+origin is the real hinge**. Hinge transform and swing angle come from the
+game's own `interactabledoorcontrol` data and ship in the plugin manifest, so
+the editor can animate the exact swing (left double-click a door in the
+plugin). Prefabs containing doors bake the closed state.
+
+## 3c. Gameplay objects (vehicles, soldiers, weapons)
+
+Vehicle spawners, soldier spawn points and the loot spawner have no mesh
+blueprint at all — they are pure spawn logic. Their previews are built from
+the game's hardware and character libraries instead:
+
+- **Vehicles**: the base hull ships in bind pose, but wheels, tracks and
+  turret parts are stored at the origin. Their true positions are mined from
+  the vehicle's **skeleton** (model-space bind transforms of `loc_Wheel_*`
+  and mount bones); tank tracks are mirrored to the road-wheel line, and
+  mounted weapon stations are attached only where the game actually mounts
+  one. Every result is gated against the measured proxy box before it ships.
+- **Soldiers**: a full specialist is uniform body + headgear + backpack +
+  face meshes, all in one shared space — an A-pose statue of the real
+  character.
+- **Weapons**: third-person weapon parts (receiver + barrel + sights)
+  self-assemble at identity in weapon space.
 
 ## 4. The review loop
 
