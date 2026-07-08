@@ -213,7 +213,9 @@
     "YuccaPotted_01_M_B",
     "YuccaPotted_01_M_C",
     "YuccaPotted_01_S_B",
-    "soukHouse_01_768x1536_Double_B_Propdress"
+    "soukHouse_01_768x1536_Double_B_Propdress",
+    "naf_busstop_01",
+    "mil_barrierconcretewall_01_192x320_a"
    ],
    "plugin": {
     "version": "1.5.0",
