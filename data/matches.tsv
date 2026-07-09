@@ -5517,7 +5517,7 @@ RadioPortable_01_B	com_radioportable_01	0.995	strong
 RadioTower_01_A	RadioTower_01_A	1.00	manual
 RadioTower_01_B	RadioTower_01_B	1.00	manual
 RadioTower_01_C	RadioTower_01_C	1.00	manual
-RefineryTower_01_B	ind_refinerytower_01	0.995	strong
+RefineryTower_01_B	RefineryTower_01_B	1.00	manual
 RetainingWall_01_B	euu_retainingwall_01	0.995	strong
 RockMedium_01_A	euu_rockmedium_01	0.995	strong
 RockMedium_01_B	naf_rockmedium_01	1.0	auto-dims
