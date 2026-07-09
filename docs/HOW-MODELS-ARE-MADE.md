@@ -40,6 +40,13 @@ A mesh alone renders black or grey; the work is in the materials:
   color: the pipeline resolves the shared sheet from the architecture
   material packs by material-name family search, applies per-mesh tiling
   parameters read from the mesh EBX, and bakes vista color/normal on top.
+- **Shared materials are region-scoped.** Generic material names (`M_Wood`,
+  `M_Ceiling`, `M_Bricks`…) exist in every region's buildings, and each
+  region authors its own sheets — often in a region-level texture tree the
+  mesh's own folder never references. A mapping only fires when the member
+  actually belongs to that region; when the only known sheet is another
+  region's, the surface stays untextured rather than wearing the wrong
+  continent (a Golmud farmhouse must never get souk plaster).
 - **Vegetation** gets its leaf cutout from the separate `Vegetation_Alpha`
   sheets (never basecolor alpha), with far-LOD billboard impostors dropped.
   The leaf rules apply **only** to actual vegetation (folder/name gated) — a
@@ -87,6 +94,41 @@ Three repair classes exist for objects the original matcher got wrong:
 That last class is verified, not assumed: the only place those names occur
 in the retail data is the per-map spawn-name registries, so there is nothing
 to build from. They stay grey until better data exists.
+
+## 3a. Blueprint-first, everywhere
+
+Name-matching a proxy to a single game mesh is the fallback, not the rule.
+A full sweep of the SDK found that most placeables — over 6,500 of ~10,900 —
+have a game blueprint, and every one of them is now built from it: exact
+member meshes, exact transforms, nested sub-prefabs, mirrored instances.
+That includes the surprises: entire pre-dressed level sections ship as
+single placeables (interior complexes with up to ~1,800 placed members),
+and they assemble like any other prop.
+
+Priority order for every placeable object:
+
+1. **Game blueprint assembly** — the authoritative multi-part build.
+2. **Trusted mesh match** — for blueprint-less props, with hygiene rules:
+   a match may never cross into backdrop billboards (`bd_`), destruction
+   variants (`dc_`) or weapon parts when the proxy is an intact world prop —
+   those matches *look* plausible in a table and render as flat tree cards
+   or wreckage in the editor.
+3. **Clean grey proxy** — decal projectors, FX volumes and logic markers
+   have nothing renderable; grey is correct, a wrong model never is.
+
+## 3d. Nothing is lost silently
+
+The assembler is required to account for every blueprint member. Lessons
+that are now hard rules, each learned from real missing geometry:
+
+- A mesh with no material-name table keeps **all** of its submeshes (the
+  shadow-mesh filter used to keep none — deleting whole prop classes).
+- Side-channel blueprints (`*_audio`, `*_lights`, `*_occluder`) are rejected
+  as fuzzy fallbacks — an audio blueprint "assembles" perfectly and places
+  nothing.
+- Every member that fails to place is logged and classified (light fixture,
+  FX emitter, wire spline, extraction error) so a coverage gap shows up in
+  the build log, not in a user's map.
 
 ## 3b. Doors that open
 
