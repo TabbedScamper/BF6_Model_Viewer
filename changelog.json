@@ -25,7 +25,8 @@
     "Depot-exact material rebuild: Dumbo",
     "Depot-exact material rebuild: Plaza",
     "Depot-exact material rebuild: GolmudRailway",
-    "Depot-exact material rebuild: Abbasid"
+    "Depot-exact material rebuild: Abbasid",
+    "Depot-exact material rebuild: Leftover"
    ],
    "models": [
     "GMetroBus_01_AbbasidOpen (+2 variants)",
@@ -3373,7 +3374,16 @@
     "WireSystemCorner_01",
     "WiringFacadeMess_01_64_A",
     "WiringFacadeMess_01_64_C",
-    "WoodenDisplayStand_03"
+    "WoodenDisplayStand_03",
+    "BR_SoukFacade_01_768x384",
+    "BR_SoukFacadeExtension_01",
+    "BR_SoukFacade_04_768x768",
+    "BR_SoukFacade_02_1024x768_CV90",
+    "BR_SoukRuin_01_A",
+    "BR_SoukRuin_01_B",
+    "BR_SoukStorefront_01_768_A",
+    "BR_SoukRuin_01_C",
+    "GB_Granite_CrowsNest_Basement_HardScape_02"
    ]
   },
   {
