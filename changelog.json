@@ -26,7 +26,8 @@
     "Depot-exact material rebuild: Plaza",
     "Depot-exact material rebuild: GolmudRailway",
     "Depot-exact material rebuild: Abbasid",
-    "Depot-exact material rebuild: Leftover"
+    "Depot-exact material rebuild: Leftover",
+    "Size-mismatch fix wave: 83 part/pole/building repoints (blueprint resolver guard)"
    ],
    "models": [
     "GMetroBus_01_AbbasidOpen (+2 variants)",
@@ -3383,7 +3384,8 @@
     "BR_SoukRuin_01_B",
     "BR_SoukStorefront_01_768_A",
     "BR_SoukRuin_01_C",
-    "GB_Granite_CrowsNest_Basement_HardScape_02"
+    "GB_Granite_CrowsNest_Basement_HardScape_02",
+    "OliveRussian_01_L_B"
    ]
   },
   {

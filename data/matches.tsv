@@ -8169,7 +8169,7 @@ BlockClusterConcrete_01_C	BlockClusterConcrete_01_C	1.00	manual
 WreckTank_Abra01_All	WreckTank_Abra01_All	1.00	manual
 ControlTower_02_Audio	de_mil_controltowerin_01	0.588	weak
 ParkingStructure_01_2FL_Blue	bd_wuu_parkingstructureb1_01	0.583	weak
-TwinBuilding_03_Decals	TwinBuilding_03_Decals	1.00	manual
+TwinBuilding_03_Decals	TwinBuilding_03_Decals	1.00	none
 CountryClub_01_B_Audio	wuu_countryclubbar_01	0.579	weak
 HighwayOverpass_Bridge_01	HighwayOverpass_Bridge_01	1.00	manual
 HighwayOverpass_Bridge_02	HighwayOverpass_Bridge_02	1.00	manual
@@ -8316,7 +8316,7 @@ CountryClubAnnex_01_Attachements	wuu_countryclubannex_01	0.483	weak
 CountryClubAnnex_01_LightingProp	wuu_countryclubannex_01	0.483	weak
 Overheadpipeline_01_T_Granite_2048	ind_overheadpipeline_01_support	0.483	weak
 ResidentialHouse_02_A_NoAftermath	br_wuu_residentialhouse_01	0.483	weak
-TwinBuilding_02_Decals_Green	TwinBuilding_02_Decals_Green	1.00	manual
+TwinBuilding_02_Decals_Green	TwinBuilding_02_Decals_Green	1.00	none
 BrooklynBridge_LightsOff_01	euu_brooklynbridge_01_base	0.48	weak
 Construction_BlockStack_01	ind_constructionbase_01	0.478	weak
 Lighthouse_01_LightingProps	dc_wuc_lighthouselight_01_d	0.476	weak
