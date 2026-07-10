@@ -5,7 +5,8 @@
    "site": [
     "Global blueprint sweep: ~3,000 props across every map rebuilt from their game assembly data \u2014 every placeable with a blueprint now has an exact multi-part model",
     "RefineryTower_01_B: full 60m composed tower baked from its Firestorm level placement (SDK-side composition, no game blueprint)",
-    "GMetroBus_01_AbbasidOpen: full texture rebuild via the new PhotoMatch loop (cairo livery, decals, two-tone paint)"
+    "GMetroBus_01_AbbasidOpen: full texture rebuild via the new PhotoMatch loop (cairo livery, decals, two-tone paint)",
+    "GMetroBus refined: destruction-state filtering (no more broken-glass/burst-tire overlays), correct taillight colors, tinted glass, wheel sheet, calibrated paint tints"
    ],
    "models": [
     "ACModule_01",
