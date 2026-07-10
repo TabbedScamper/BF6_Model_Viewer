@@ -14,7 +14,8 @@
     "Depot-exact material rebuild: Granite_Underground",
     "Depot-exact material rebuild: Granite_Downtown",
     "Depot-exact material rebuild: Capstone",
-    "Depot-exact material rebuild: Limestone"
+    "Depot-exact material rebuild: Limestone",
+    "Depot-exact material rebuild: Granite_Marina"
    ],
    "models": [
     "GMetroBus_01_AbbasidOpen (+2 variants)",
@@ -1795,7 +1796,26 @@
     "WiringFacade_01_C90V_OrientedVertical",
     "YuccaPotted_01_M_B",
     "YuccaPotted_01_S_A",
-    "YuccaPotted_01_S_B"
+    "YuccaPotted_01_S_B",
+    "CommercialWasher_01",
+    "BusSign_01",
+    "AlleyTrash_04",
+    "AlleyTrash_05",
+    "AlleyTrash_08",
+    "AlleyTrash_07",
+    "Crate_04_CineM01",
+    "HighwaySignage_04_Exit42",
+    "FlowerMiscPotted_01_S_D",
+    "GTruckPickup_01_LifeGuard",
+    "MarinaVillageRestaurant_04",
+    "MetroBus_01_Interior",
+    "MetroBus_01_Burnt_EnglishText",
+    "Trestle_01",
+    "PlanterConcrete_01_512",
+    "WineBottleSingle_01_A",
+    "TruckPickup_01_Wreck_Wheel",
+    "WineBottleSingle_01_B",
+    "MarinaVillageRestaurant_04_LightingProps"
    ]
   },
   {
