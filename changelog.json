@@ -4,7 +4,8 @@
    "date": "2026-07-09",
    "site": [
     "Global blueprint sweep: ~3,000 props across every map rebuilt from their game assembly data \u2014 every placeable with a blueprint now has an exact multi-part model",
-    "RefineryTower_01_B: full 60m composed tower baked from its Firestorm level placement (SDK-side composition, no game blueprint)"
+    "RefineryTower_01_B: full 60m composed tower baked from its Firestorm level placement (SDK-side composition, no game blueprint)",
+    "GMetroBus_01_AbbasidOpen: full texture rebuild via the new PhotoMatch loop (cairo livery, decals, two-tone paint)"
    ],
    "models": [
     "ACModule_01",
@@ -3034,7 +3035,8 @@
     "truckpickup_01_wreck_trunk",
     "ZS_Barrack_02_A_SecurityCheckPoint",
     "snacksmetalshe01",
-    "RefineryTower_01_B"
+    "RefineryTower_01_B",
+    "GMetroBus_01_AbbasidOpen"
    ]
   },
   {
