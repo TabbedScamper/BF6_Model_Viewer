@@ -66,6 +66,12 @@
 .mv-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);flex:none}
 .mv-name{font-family:'BF Sub','Oswald',sans-serif;text-transform:uppercase;letter-spacing:.03em;font-size:1.15rem;color:var(--txt)}
 .mv-sub{font-family:'BF Mono','Inter',monospace;font-size:.72rem;color:var(--muted);margin-top:2px}
+/* livery/texture variant selector */
+.mv-variants{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:7px}
+.varpill{padding:3px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--txt2);
+  font-family:'BF Mono','Inter',monospace;font-size:.68rem;font-weight:600;cursor:pointer;transition:var(--ease)}
+.varpill:hover{color:var(--txt);border-color:var(--line-h)}
+.varpill.active{background:rgba(255,107,26,.14);color:var(--cyan);border-color:var(--line-h);box-shadow:0 0 10px rgba(255,107,26,.18)}
 .mv-actions{display:flex;gap:8px;flex:none}
 .mv-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:rgba(255,107,26,.08);
   border:1px solid rgba(255,107,26,.4);color:var(--txt);font-size:1.3rem;text-decoration:none;transition:var(--ease)}

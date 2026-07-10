@@ -260,8 +260,52 @@
   // Desktop gets the full inspector (Godot camera, surface select/crop,
   // live texture realign + fix export); phones keep the light spinner.
   const ov = $("#mvOverlay"), big = $("#mvBig"), inspectEl = $("#mvInspect");
+  const varBox = $("#mvVariants");
   let inspector = null;                 // lazy-loaded module (desktop only)
   let closeTimer = null;
+  // route a GLB url into whichever viewer this device uses (desktop
+  // inspector re-opens cleanly: inspector.open() tears down the old session)
+  function loadInto(p, url) {
+    if (!isTouch) {
+      big.style.display = "none";
+      big.removeAttribute("src");
+      inspectEl.hidden = false;
+      const boot = mod => { inspector = mod; mod.open(url, p.name, inspectEl, $("#mvHint")); };
+      if (inspector) boot(inspector);
+      else import("./inspector.js?v=2").then(boot).catch(() => {
+        // inspector failed (old browser?) — fall back to the spinner
+        inspectEl.hidden = true;
+        big.style.display = "";
+        big.setAttribute("src", url);
+      });
+    } else {
+      inspectEl.hidden = true;
+      big.style.display = "";
+      big.setAttribute("src", url);
+      big.setAttribute("camera-controls", "");
+      big.setAttribute("disable-pan", "");
+      big.removeAttribute("disable-zoom");
+    }
+  }
+  // livery/texture variant pills (manifest e.variants from publish_variants.py)
+  const variantUrl = v => (CFG.modelsBase || "") + v.glb + "?b=" + (v.hash || v.kb || 0);
+  function buildVariantPills(p) {
+    const vs = p.variants || [];
+    if (!vs.length) { varBox.hidden = true; varBox.innerHTML = ""; return; }
+    const tip = v => (v.maps || []).length
+      ? `${v.name} — ${v.maps.map(mapName).join(", ")}`
+      : `${v.name} — map availability unknown`;
+    varBox.innerHTML =
+      `<button class="varpill active" data-i="-1" title="Original livery">Base</button>` +
+      vs.map((v, i) => `<button class="varpill" data-i="${i}" title="${tip(v)}">${v.name}</button>`).join("");
+    varBox.hidden = false;
+    $$(".varpill", varBox).forEach(b => b.onclick = () => {
+      if (b.classList.contains("active")) return;
+      $$(".varpill", varBox).forEach(x => x.classList.toggle("active", x === b));
+      const i = +b.dataset.i;
+      loadInto(p, i < 0 ? glbUrl(p) : variantUrl(vs[i]));
+    });
+  }
   function openViewer(p) {
     cur = p;
     if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
@@ -274,28 +318,11 @@
     const ingame = (p.portalName && p.portalName !== p.name) ? `<span class="mv-ingame" title="In-game asset name">in-game: <code>${p.name}</code></span>` : "";
     $("#mvSub").innerHTML = `${fmtTris(p.tris)}${pill}${maps}${ingame}`;
     reflectViewer(p.name);
-    if (!isTouch) {
-      $("#mvHint").textContent = "drag = orbit · scroll = zoom · RMB = freelook + WASD fly (scroll = speed) · ✎ Edit to inspect & fix textures";
-      big.style.display = "none";
-      big.removeAttribute("src");
-      inspectEl.hidden = false;
-      const boot = mod => { inspector = mod; mod.open(glbUrl(p), p.name, inspectEl, $("#mvHint")); };
-      if (inspector) boot(inspector);
-      else import("./inspector.js?v=2").then(boot).catch(() => {
-        // inspector failed (old browser?) — fall back to the spinner
-        inspectEl.hidden = true;
-        big.style.display = "";
-        big.setAttribute("src", glbUrl(p));
-      });
-    } else {
-      $("#mvHint").textContent = "drag to orbit · pinch to zoom";
-      inspectEl.hidden = true;
-      big.style.display = "";
-      big.setAttribute("src", glbUrl(p));
-      big.setAttribute("camera-controls", "");
-      big.setAttribute("disable-pan", "");
-      big.removeAttribute("disable-zoom");
-    }
+    $("#mvHint").textContent = isTouch
+      ? "drag to orbit · pinch to zoom"
+      : "drag = orbit · scroll = zoom · RMB = freelook + WASD fly (scroll = speed) · ✎ Edit to inspect & fix textures";
+    buildVariantPills(p);
+    loadInto(p, glbUrl(p));
     ov.hidden = false;
     requestAnimationFrame(() => ov.classList.add("show"));
   }

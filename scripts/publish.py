@@ -66,6 +66,11 @@ def make_plugin_manifest(man):
             entry["nofit"] = True
         if prox in doors:
             entry["door"] = {"deg": doors[prox].get("deg", 85.0)}
+        # livery/texture variants (publish_variants.py): name + maps only —
+        # the plugin derives godot/<name>__<label>.glb itself when needed
+        if e.get("variants"):
+            entry["variants"] = [{"name": v.get("name"), "maps": v.get("maps", [])}
+                                 for v in e["variants"]]
         out["props"][prox] = entry
     return out
 
