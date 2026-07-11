@@ -21,7 +21,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Outskirts",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Badlands",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Contaminated",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Tungsten"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Tungsten",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Battery"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -589,7 +590,12 @@
     "TungstenVillageName_01",
     "WallCompound_01_120x1024",
     "WarTorn_06",
-    "WallCompound_01_120x2048"
+    "WallCompound_01_120x2048",
+    "StreetLamp_Rect_01",
+    "CarSedan_02_Wreck_Door_FrontLeft",
+    "BlackLocust_01_S",
+    "MilitaryBrickBuilding_01_B_Back",
+    "GCarSedan_02_OpenDoors_01"
    ]
   },
   {
