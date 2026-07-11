@@ -18,7 +18,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Capstone",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Limestone",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_Marina",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Outskirts"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Outskirts",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Badlands"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -513,7 +514,31 @@
     "TruckPickup_01_Wreck_Rim",
     "TruckPickup_01_Wreck_TireCable",
     "VillageShack_01_A",
-    "WaterTower_03"
+    "WaterTower_03",
+    "BarrierJersey_01_256x124",
+    "ConcreteFoundationMetalRailing_01_192x384_CCW90",
+    "ConcreteFoundationMetalRailing_01_384x384",
+    "ConcreteFoundationMetalRailing_01_768x384",
+    "Badlands_Flankbus",
+    "Barrack_02_B_Props",
+    "Construction_WoodStack_02",
+    "MetalRailingBroken_01",
+    "PowerlineRural_01_A_Single",
+    "RoadBarrierMetal_01_End_Inverted",
+    "Guard_Post",
+    "RustyTank_01",
+    "SignConstructionZone_01_MilitarySign",
+    "VanPassenger_01_Wreck_Door_FrontLeft",
+    "VanPassenger_01_Wreck_A",
+    "VanPassenger_01_Wreck_Door_FrontRight",
+    "VanPassenger_01_Wreck_B",
+    "VanPassenger_01_Wreck_Door_MiddleLeft",
+    "VanPassenger_01_Wreck_Door_MiddleRight",
+    "VanPassenger_01_Wreck_Rim",
+    "VanPassenger_01_Wreck_Tire",
+    "VanPassenger_01_Wreck_TireFlat",
+    "snacksmetalshe01",
+    "WreckHelicopter_UH60_01"
    ]
   },
   {
