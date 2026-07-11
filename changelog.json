@@ -30,7 +30,8 @@
     "Size-mismatch fix wave: 83 part/pole/building repoints (blueprint resolver guard)",
     "Variant renditions for all buildable liveries",
     "GCarSedan_01 exact-match pass: carpaint flat color, red taillights, glass tints, California plate, seat swatches, destruction-state cull (also refreshes the bus)",
-    "GCarSedan_01 interior corrections: metal-swatch PBR band, red buckle buttons, linear AO bake (seats)"
+    "GCarSedan_01 interior corrections: metal-swatch PBR band, red buckle buttons, linear AO bake (seats)",
+    "GCarSedan_01 taxi + police_ny wrap variants"
    ],
    "models": [
     "GMetroBus_01_AbbasidOpen (+2 variants)",
