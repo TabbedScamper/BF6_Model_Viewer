@@ -12,7 +12,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): FireStorm",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_MilitaryRnD",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_MilitaryStorage",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Eastwood"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Eastwood",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_Underground"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -338,7 +339,21 @@
     "TruckDelivery_01_PanelRight",
     "TruckDelivery_01_Trunk",
     "WallCompoundGate_01",
-    "WreckTruck_01_Bed"
+    "WreckTruck_01_Bed",
+    "AlleyTrash_01",
+    "CardboxPalletPile_02",
+    "CeilingFan_01",
+    "CeilingFan_01_animatedFast",
+    "Area_03_base",
+    "CeilingFan_01_animatedSlow",
+    "FXACModule_01",
+    "FridgeShop_01",
+    "Area_02_Base",
+    "Area_01_Base",
+    "GMRAP_01",
+    "GTruckPickup_01_OpenDoors",
+    "WreckTruck_01_A",
+    "Area_02_SetDressing"
    ]
   },
   {
