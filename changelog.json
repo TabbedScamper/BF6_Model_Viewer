@@ -22,7 +22,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Badlands",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Contaminated",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Tungsten",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Battery"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Battery",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Aftermath"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -595,7 +596,27 @@
     "CarSedan_02_Wreck_Door_FrontLeft",
     "BlackLocust_01_S",
     "MilitaryBrickBuilding_01_B_Back",
-    "GCarSedan_02_OpenDoors_01"
+    "GCarSedan_02_OpenDoors_01",
+    "AftermathDebrisPileBrickPlaster_120_A_1",
+    "Bollard_01_B",
+    "CarSedan_01_TaxiRoofSign_01",
+    "Fireladder_01",
+    "CarSedan_01",
+    "Fireladder_01_Wreck",
+    "MapleJapanese_01_S",
+    "GDumpTruck_01_E",
+    "Area_01_MechanicalRoom_01",
+    "GM1083CargoTruck_01_Bed_Cargo02",
+    "GDumpTruck_01_F",
+    "MetroBus_01_Door_Front_01",
+    "MetroBus_01",
+    "MetroBus_01_Door_Front_02",
+    "MetroBus_01_Door_Rear_01",
+    "MetroBus_01_Door_Rear_02",
+    "MetroBus_01_Roof",
+    "MetroBus_01_Trunk",
+    "ShopAwning_02",
+    "Panorama02_GarageScaffolding"
    ]
   },
   {
