@@ -23,7 +23,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Contaminated",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Tungsten",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Battery",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Aftermath"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Aftermath",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Dumbo"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -616,7 +617,15 @@
     "MetroBus_01_Roof",
     "MetroBus_01_Trunk",
     "ShopAwning_02",
-    "Panorama02_GarageScaffolding"
+    "Panorama02_GarageScaffolding",
+    "CounterStore_02",
+    "AftermathDebrisPileConcrete_Skew_210_B",
+    "ACModule_02_VFX",
+    "BarrierJerseyFence_01",
+    "ACModule_01_VFX",
+    "GCarSedan_02_OpenDoors_03",
+    "FallenTruck_07",
+    "ConstructionSite_03_B"
    ]
   },
   {
