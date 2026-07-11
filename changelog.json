@@ -4,7 +4,8 @@
    "date": "2026-07-11",
    "site": [
     "GCarSedan_01 exploded state: photo-matched wreck variant (tap the model to cycle)",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Common"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Common",
+    "Exploded wreck variants: 8 vehicles (tap the model to cycle)"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -35,7 +36,15 @@
     "WeaponBench_Storagebox_01",
     "VehicleResupplyStation",
     "WeaponCase_Pistol_01",
-    "sandbagspilecorner_01_128"
+    "sandbagspilecorner_01_128",
+    "GCar4x4_01 (+1 variants)",
+    "GCarSUV_01 (+1 variants)",
+    "GCarSedan_02 (+1 variants)",
+    "GCarSedan_03 (+1 variants)",
+    "GDumpTruck_01 (+1 variants)",
+    "GMetroBus_01_AbbasidOpen (+1 variants)",
+    "GTruckPickup_01 (+1 variants)",
+    "GVanPassenger_01 (+1 variants)"
    ]
   },
   {
