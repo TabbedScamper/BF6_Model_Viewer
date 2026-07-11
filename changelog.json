@@ -10,7 +10,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Subsurface",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_TechCenter",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): FireStorm",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_MilitaryRnD"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_MilitaryRnD",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_MilitaryStorage"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -287,7 +288,21 @@
     "ParkingBooth_01",
     "ParkingBooth_01_C",
     "PortableDieselEngine_01_LampTower_1_Light_Off",
-    "SiloTankLong_01_ChemicalStorage_01"
+    "SiloTankLong_01_ChemicalStorage_01",
+    "BlockClusterConcrete_01_A",
+    "HescoBastionPlatform_01",
+    "GCarSUV_01_OpenDoors_B",
+    "FlatbedTrailer_01_DDPF",
+    "Military_Warehouse_Medium_03_Props",
+    "Military_Warehouse_Medium_03_Props_B",
+    "TirePileReinforced_01_C",
+    "OfficeBuilding_02_LightingProps_C",
+    "TruckPickup_01_Wreck_A",
+    "TruckPickup_01_Wreck_B",
+    "TruckPickup_01_Wreck_Door_FrontLeft",
+    "TruckPickup_01_Wreck_Door_RearRight",
+    "truckpickup_01_wreck_trunk",
+    "WallLamp_Round_01"
    ]
   },
   {
