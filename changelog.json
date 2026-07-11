@@ -1,9 +1,18 @@
 {
  "entries": [
   {
+   "date": "2026-07-11",
+   "site": [
+    "GCarSedan_01 exploded state: photo-matched wreck variant (tap the model to cycle)"
+   ],
+   "models": [
+    "GCarSedan_01 (+1 variants)"
+   ]
+  },
+  {
    "date": "2026-07-10",
    "site": [
-    "Tap or click the model itself to cycle its livery variants (desktop + mobile) — the pills stay in sync",
+    "Tap or click the model itself to cycle its livery variants (desktop + mobile) \u2014 the pills stay in sync",
     "Depot-exact material rebuild: Common",
     "Depot-exact material rebuild: Granite_ResidentialNorth",
     "Depot-exact material rebuild: Subsurface",
