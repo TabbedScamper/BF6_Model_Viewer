@@ -16,7 +16,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_Underground",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_Downtown",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Capstone",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Limestone"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Limestone",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_Marina"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -471,7 +472,13 @@
     "ScooterClassic_01_Handle",
     "ScooterClassic_01_Seat",
     "StreetLamp_Rect_03",
-    "WallLamp_Rect_01"
+    "WallLamp_Rect_01",
+    "TruckPickup_01_Wreck_Hood",
+    "TruckPickup_01_Wreck_Wheel",
+    "BusSign_01",
+    "CommercialWasher_01",
+    "MetroBus_01_Interior",
+    "MarinaVillageRestaurant_04"
    ]
   },
   {
