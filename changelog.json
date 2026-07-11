@@ -3,10 +3,39 @@
   {
    "date": "2026-07-11",
    "site": [
-    "GCarSedan_01 exploded state: photo-matched wreck variant (tap the model to cycle)"
+    "GCarSedan_01 exploded state: photo-matched wreck variant (tap the model to cycle)",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Common"
    ],
    "models": [
-    "GCarSedan_01 (+1 variants)"
+    "GCarSedan_01 (+1 variants)",
+    "BarbedWire_01_B",
+    "BarrelOilExplosive_01",
+    "BeverageFridge_01_B",
+    "CameraSurveillance_01_B",
+    "BroadleafUrban_01_M_B",
+    "BroadleafUrban_01_L_A",
+    "CinderblockStack_01_B_60",
+    "CommandPost_01_A",
+    "CommandPost_01_PropsB",
+    "CommandPost_01_PropsA",
+    "CommandPost_01_PropsC",
+    "CommandPost_01_Drone_Props",
+    "CrateMetal_01_B",
+    "ConstructionSetPillarChip_01_B_128x512x128",
+    "FiringRange_WindowedDoor_01",
+    "FlagPole_01_USA",
+    "PlayerCustomization_Headgear_01_A",
+    "CypressItalian_01_M_A",
+    "PlayerCustomization_Headgear_02_A",
+    "SandBags_01_256x120",
+    "SandBags_01_C90_B",
+    "ServerRackLarge_01",
+    "ServerRack_01",
+    "SandBags_01_256x180",
+    "WeaponBench_Storagebox_01",
+    "VehicleResupplyStation",
+    "WeaponCase_Pistol_01",
+    "sandbagspilecorner_01_128"
    ]
   },
   {
