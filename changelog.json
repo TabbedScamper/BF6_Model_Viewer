@@ -9,7 +9,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_ResidentialNorth",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Subsurface",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_TechCenter",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): FireStorm"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): FireStorm",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_MilitaryRnD"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -258,7 +259,35 @@
     "WreckTruck_01_WheelFlat_Left_01",
     "WreckTruck_01_B",
     "WreckTruck_01_Canopy",
-    "WreckTruck_01_WheelFlat_Right_01"
+    "WreckTruck_01_WheelFlat_Right_01",
+    "CeilingLamp_Round_01",
+    "BarrierConstructionFenceMetal_01_256_300",
+    "AntennaMastMetal_01",
+    "AntennaMast_01",
+    "Barrack_02_D",
+    "Barrack_02_C",
+    "ConstructionFence_01",
+    "ConstructionFence_01_B",
+    "ChemicalStorage_StorageFacility_02",
+    "ChemicalPlantStructure_01",
+    "ConstructionFence_01_End",
+    "ConstructionFence_01_NoSupport",
+    "CoveredStorage_02_Props",
+    "ElectricBox_02_A",
+    "FLoodLight_Rect_01",
+    "Floodlight_Rect_01_C",
+    "ChemicalPlantStructure_02",
+    "ChemicalPlantPumpStation_01",
+    "Military_Warehouse_Medium_01_LightingPropsA",
+    "ParkingBoothWindow_111x128_01",
+    "OfficeBuilding_02_LightingProps",
+    "ParkingBoothWindow_128x128_01",
+    "ParkingBoothWindow_148x128_01",
+    "PortableLamp_Rect_02",
+    "ParkingBooth_01",
+    "ParkingBooth_01_C",
+    "PortableDieselEngine_01_LampTower_1_Light_Off",
+    "SiloTankLong_01_ChemicalStorage_01"
    ]
   },
   {
