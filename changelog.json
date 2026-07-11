@@ -20,7 +20,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Granite_Marina",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Outskirts",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Badlands",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Contaminated"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Contaminated",
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Tungsten"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -571,7 +572,24 @@
     "SuppliesPack_04_Sand_1",
     "WreckTruck_01_Bed_1",
     "RadarStation_Contaminated_Area11_01_Props",
-    "ConcreteHangar_01_Props_B"
+    "ConcreteHangar_01_Props_B",
+    "HouseRuralLargeTerraceAddon_01",
+    "HouseRuralLargeTerraceAddon_01_B",
+    "DestroyedTreeLine_01",
+    "HouseRuralLarge_01_A_PropsA",
+    "DumpTruck_01_DEPRECATED",
+    "HouseRuralSmall_01_A_PropsA_B",
+    "HouseRuralSmall_01_B_PropsA_B",
+    "HouseRuralSmall_02_A_Props",
+    "JuniperPencil_01_M_B",
+    "Pear_01_S_B",
+    "HouseRuralSmall_01_A_PropsC_B",
+    "HouseRuralSpareRoomAddon_01_PropsD_B",
+    "PoplarWhiteCluster_02_S_A",
+    "TungstenVillageName_01",
+    "WallCompound_01_120x1024",
+    "WarTorn_06",
+    "WallCompound_01_120x2048"
    ]
   },
   {
