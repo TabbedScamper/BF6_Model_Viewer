@@ -28,7 +28,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Plaza",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): GolmudRailway",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Abbasid",
-    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Leftover"
+    "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Leftover",
+    "Rust object pass: PipeOilFie01 segments now wear the in-game safety-yellow finish"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -976,7 +977,10 @@
     "BR_SoukFacade_02_1024x768_CV90",
     "BR_SoukFacade_04_768x768",
     "BR_SoukRuin_01_B",
-    "GB_Granite_CrowsNest_Basement_HardScape_02"
+    "GB_Granite_CrowsNest_Basement_HardScape_02",
+    "PipeOilFie01_128",
+    "PipeOilFie01_32",
+    "PipeOilFie01_64"
    ]
   },
   {

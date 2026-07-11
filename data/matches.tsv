@@ -6392,12 +6392,12 @@ OutskirtsHouseMedium_04	OutskirtsHouseMedium_04	1.00	manual
 PipeOilFie01	PipeOilFie01	1.00	manual
 PipeOilFie01_1024_A	ind_pipeoilfield_01_1024_a	0.963	strong
 PipeOilFie01_1024_B	ind_pipeoilfield_01_1024_a	0.963	strong
-PipeOilFie01_128	ind_pipeoilfield_01_128_a	0.963	strong
+PipeOilFie01_128	PipeOilFie01_128	1.00	manual
 PipeOilFie01_128_B	ind_pipeoilfield_01_128_a	0.963	strong
 PipeOilFie01_128_C	ind_pipeoilfield_01_128_a	0.963	strong
 PipeOilFie01_256_A	ind_pipeoilfield_01_256_a	0.963	strong
 PipeOilFie01_256_B	ind_pipeoilfield_01_256_a	0.963	strong
-PipeOilFie01_32	dc_ind_pipeoilfield_01_a	0.963	strong
+PipeOilFie01_32	PipeOilFie01_32	1.00	manual
 PipeOilFie01_32_B	dc_ind_pipeoilfield_01_a	0.963	strong
 PipeOilFie01_512_A	ind_pipeoilfield_01_512_a	0.963	strong
 PipeOilFie01_512_B	ind_pipeoilfield_01_512_a	0.963	strong
