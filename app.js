@@ -270,7 +270,8 @@
       big.style.display = "none";
       big.removeAttribute("src");
       inspectEl.hidden = false;
-      const boot = mod => { inspector = mod; mod.open(url, p.name, inspectEl, $("#mvHint")); };
+      const tap = (p.variants || []).length ? cycleVariant : null;   // click model = next variant
+      const boot = mod => { inspector = mod; mod.open(url, p.name, inspectEl, $("#mvHint"), tap); };
       if (inspector) boot(inspector);
       else import("./inspector.js?v=2").then(boot).catch(() => {
         // inspector failed (old browser?) — fall back to the spinner
@@ -306,6 +307,33 @@
       loadInto(p, i < 0 ? glbUrl(p) : variantUrl(vs[i]));
     });
   }
+  // tap/click the model itself = next livery (Base → v1 → … → Base); reuses
+  // the pill click path so the active pill always tracks what's shown
+  function cycleVariant() {
+    const pills = $$(".varpill", varBox);
+    if (varBox.hidden || pills.length < 2) return;
+    const i = pills.findIndex(b => b.classList.contains("active"));
+    const next = pills[(i + 1) % pills.length];
+    next.click();
+    window.toast && toast("Variant: " + next.textContent);
+  }
+  // phone spinner (+ desktop fallback): a single-finger TAP that lands ON the
+  // model cycles — a drag/pinch (moved/slow/multi-touch) or a tap on empty
+  // background does nothing. model-viewer hit-tests the tap for us.
+  const taps = new Set();
+  let tap0 = null;
+  big.addEventListener("pointerdown", e => {
+    taps.add(e.pointerId);
+    tap0 = taps.size === 1 ? { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now() } : null;
+  });
+  big.addEventListener("pointercancel", e => { taps.delete(e.pointerId); tap0 = null; });
+  big.addEventListener("pointerup", e => {
+    taps.delete(e.pointerId);
+    const d = tap0; tap0 = null;
+    if (!d || d.id !== e.pointerId || !cur || !(cur.variants || []).length) return;
+    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6 || performance.now() - d.t > 400) return;
+    try { if (big.positionAndNormalFromPoint(e.clientX, e.clientY)) cycleVariant(); } catch (x) {}
+  });
   function openViewer(p) {
     cur = p;
     if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
@@ -318,9 +346,10 @@
     const ingame = (p.portalName && p.portalName !== p.name) ? `<span class="mv-ingame" title="In-game asset name">in-game: <code>${p.name}</code></span>` : "";
     $("#mvSub").innerHTML = `${fmtTris(p.tris)}${pill}${maps}${ingame}`;
     reflectViewer(p.name);
+    const vhint = (p.variants || []).length ? (isTouch ? " · tap the model = next variant" : " · click the model = next variant") : "";
     $("#mvHint").textContent = isTouch
-      ? "drag to orbit · pinch to zoom"
-      : "drag = orbit · scroll = zoom · RMB = freelook + WASD fly (scroll = speed) · ✎ Edit to inspect & fix textures";
+      ? "drag to orbit · pinch to zoom" + vhint
+      : "drag = orbit · scroll = zoom" + vhint + " · RMB = freelook + WASD fly (scroll = speed) · ✎ Edit to inspect & fix textures";
     buildVariantPills(p);
     loadInto(p, glbUrl(p));
     ov.hidden = false;

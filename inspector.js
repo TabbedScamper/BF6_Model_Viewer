@@ -24,7 +24,9 @@ export function close() {
   S = null;
 }
 
-export function open(url, modelName, mount, statusEl) {
+// onModelTap (optional): called when a true CLICK (not an orbit drag) lands on
+// the model in view mode — the site uses it to cycle livery variants
+export function open(url, modelName, mount, statusEl, onModelTap) {
   close();
   const abort = new AbortController();
   const sig = { signal: abort.signal };
@@ -79,6 +81,7 @@ export function open(url, modelName, mount, statusEl) {
       $('.i-crop').checked = false;
       clearPick();
     }
+    renderer.domElement.style.cursor = '';
     status('');
   };
   S = { abort, renderer, mount, raf: 0 };
@@ -195,7 +198,7 @@ export function open(url, modelName, mount, statusEl) {
 
   // ---------- selection / crop / align (same behavior as the review train) ----
   const ray = new THREE.Raycaster();
-  let picked = null, savedEmissive = null, isolated = false, downPos = null;
+  let picked = null, savedEmissive = null, isolated = false, downPos = null, downT = 0;
   let lockedPlane = null, boxMesh = null, boxLine = null, regionMesh = null;
   let cropping = false, cropA = null;
   const sessionFixes = {};
@@ -502,6 +505,7 @@ export function open(url, modelName, mount, statusEl) {
 
   renderer.domElement.addEventListener('pointerdown', e => {
     downPos = [e.clientX, e.clientY];
+    downT = performance.now();
     if (editMode && $('.i-crop').checked && e.button === 0 && current) {
       if (!lockedPlane) {
         const hit = meshAt(e.clientX, e.clientY);
@@ -512,11 +516,14 @@ export function open(url, modelName, mount, statusEl) {
       if (A) { cropping = true; cropA = A; controls.enabled = false; }
     }
   }, sig);
+  let hoverAt = null;   // pointer-affordance raycast, resolved once per frame in tick()
   renderer.domElement.addEventListener('pointermove', e => {
     if (cropping && lockedPlane) {
       const B = planePoint(e.clientX, e.clientY);
       if (B) updateBox(cropA, B);
+      return;
     }
+    if (onModelTap && !editMode && !flying && e.buttons === 0) hoverAt = [e.clientX, e.clientY];
   }, sig);
   renderer.domElement.addEventListener('pointerup', e => {
     if (cropping) {
@@ -528,9 +535,13 @@ export function open(url, modelName, mount, statusEl) {
     if (!downPos) return;
     const moved = Math.hypot(e.clientX - downPos[0], e.clientY - downPos[1]);
     downPos = null;
-    if (editMode && moved < 5 && e.button === 0) {
+    if (moved >= 5 || e.button !== 0) return;   // orbit drags / other buttons never count as a click
+    if (editMode) {
       const hit = current && meshAt(e.clientX, e.clientY);
       if (hit) doPickHit(hit); else clearPick();
+    } else if (onModelTap && current && performance.now() - downT < 400 &&
+               meshAt(e.clientX, e.clientY)) {
+      onModelTap();                             // view mode: click ON the model = next variant
     }
   }, sig);
 
@@ -633,6 +644,10 @@ export function open(url, modelName, mount, statusEl) {
     S.raf = requestAnimationFrame(tick);
     flyStep();
     if (!flying) controls.update();
+    if (hoverAt) {   // variant props: pointer cursor over the model = "click me"
+      renderer.domElement.style.cursor = (current && !editMode && meshAt(hoverAt[0], hoverAt[1])) ? 'pointer' : '';
+      hoverAt = null;
+    }
     renderer.render(scene, cam);
   })();
 }
