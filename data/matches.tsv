@@ -7766,7 +7766,7 @@ PalmMexicanWi02_M_A_Roots	bs_com_palmmexican_01_m_a	0.8	fuzzy
 PalmMexicanWi02_M_B_Roots	bs_com_palmmexican_01_m_a	0.8	fuzzy
 Panorama02_GarageScaffolding	Panorama02_GarageScaffolding	1.00	manual
 Panorama_01_LargeScaffolding	ind_scaffolding_01	0.8	fuzzy
-Panorama_01_Scaffolding_01	ind_scaffolding_01	0.8	fuzzy
+Panorama_01_Scaffolding_01	Panorama_01_Scaffolding_01	1.00	manual
 ParkStorage_01_BasketballCourt	ba_euu_basketball_01	0.8	fuzzy
 ParkingBarrierGate_01_StopSign	ParkingBarrierGate_01_StopSign	1.00	manual
 ParkingBooth_01_Eastwood	ParkingBooth_01_Eastwood	1.00	manual

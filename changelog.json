@@ -30,7 +30,8 @@
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Abbasid",
     "Material-exact rebuild (carpaint/glass/lights/AO/destruction): Leftover",
     "Rust object pass: PipeOilFie01 segments now wear the in-game safety-yellow finish",
-    "Variant renditions: full library rebuild (liveries + wraps)"
+    "Variant renditions: full library rebuild (liveries + wraps)",
+    "Add Panorama_01_Scaffolding_01 high-poly composite (Aftermath)"
    ],
    "models": [
     "GCarSedan_01 (+1 variants)",
@@ -1070,7 +1071,8 @@
     "TruckPickup_01 (+1 variants)",
     "VendingMachine_01 (+3 variants)",
     "VendingMachine_01A (+3 variants)",
-    "VendingMachine_02A (+3 variants)"
+    "VendingMachine_02A (+3 variants)",
+    "Panorama_01_Scaffolding_01"
    ]
   },
   {
